@@ -27,7 +27,7 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
         return init.exit_code
 
     if args.discover:
-        return _run_onvif_discovery(tui)
+        return _run_onvif_discovery(args, tui)
         
     cache_entry = _load_target_cache(args, tui)
     
@@ -260,7 +260,7 @@ def _initialize_environment(args: argparse.Namespace, tui: TUI) -> Result:
 
     return Result(ok=True, exit_code=ExitCode.SUCCESS)
 
-def _run_onvif_discovery(tui: TUI) -> ExitCode:
+def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
     """
     Continuously discover ONVIF devices on the local network and print only new results.
     """
@@ -303,6 +303,26 @@ def _run_onvif_discovery(tui: TUI) -> ExitCode:
                 )
 
                 for device in new_devices:
+                    host = device.get("host") or ""
+                    manufacturer = _parse_onvif_scopes(device.get("scopes", [])).get("Manufacturer")
+
+                    if not args.no_cache:
+                        cachedata.upsert_onvif_discovery(
+                            host,
+                            manufacturer=manufacturer,
+                        )
+                        if host and manufacturer:
+                            tui.info2(
+                                "Saved ONVIF discovery data to cache for {host} ({manufacturer})",
+                                host=host,
+                                manufacturer=manufacturer,
+                            )
+                        elif host:
+                            tui.info2(
+                                "Saved ONVIF discovery data to cache for {host}",
+                                host=host,
+                            )
+
                     _print_onvif_discovery_device(device, tui)
 
             time.sleep(2)
@@ -1469,9 +1489,15 @@ def _run_rtsp_scan(
         tui=tui,
     ) if onvif_streams else []
 
-    vendor = args.vendor or manufacturer
-    if vendor:
+    cached_manufacturer = cachedata.get_cached_onvif_manufacturer(cachedata.load_target(args.target))
+
+    vendor = args.vendor or manufacturer or cached_manufacturer
+    if args.vendor:
         tui.info2("RTSP vendor selected: {vendor}", vendor=vendor)
+    elif manufacturer:
+        tui.info2("RTSP vendor inferred from ONVIF: {vendor}", vendor=vendor)
+    elif cached_manufacturer:
+        tui.info2("RTSP vendor loaded from cache: {vendor}", vendor=vendor)
     else:
         vendor = _detect_rtsp_vendor(args.target, rtsp_ports, rtsp_kb, tui)
 

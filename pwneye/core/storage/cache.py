@@ -118,6 +118,23 @@ def upsert_onvif_success(
     save_target(host, data)
 
 
+def upsert_onvif_discovery(
+    host: str,
+    *,
+    manufacturer: str | None = None,
+) -> None:
+    """
+    Persist non-authenticated ONVIF discovery data for the target.
+    """
+    if not manufacturer:
+        return
+
+    data = load_target(host) or _empty_document(host)
+    onvif = data.setdefault("onvif", {})
+    onvif["manufacturer"] = manufacturer
+    save_target(host, data)
+
+
 def upsert_rtsp_success(
     host: str,
     *,
@@ -173,6 +190,21 @@ def get_cached_onvif_auth(data: dict | None) -> dict | None:
         "manufacturer": onvif.get("manufacturer"),
         "streams": onvif.get("streams", []),
     }
+
+
+def get_cached_onvif_manufacturer(data: dict | None) -> str | None:
+    """
+    Return a cached ONVIF manufacturer hint, if available.
+    """
+    if not data:
+        return None
+
+    onvif = data.get("onvif") or {}
+    manufacturer = onvif.get("manufacturer")
+    if not manufacturer:
+        return None
+
+    return str(manufacturer)
 
 
 def get_cached_rtsp_auth(data: dict | None) -> dict | None:
