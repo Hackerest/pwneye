@@ -1,0 +1,29 @@
+# Common ONVIF knowledge base
+# Used for detection and weak/default credential testing
+
+ports:
+  - 80
+  - 443
+  - 8000
+  - 8001
+  - 8080
+  - 8899
+  - 6688
+
+usernames:
+  - ""
+  - admin
+  - root
+  - user
+  - camera
+  - service
+
+passwords:
+  - ""
+  - admin
+  - 12345
+  - 123456
+  - password
+  - root
+  - user
+  - 0000

@@ -1,0 +1,7031 @@
+ports:
+- 80
+- 81
+- 85
+- 88
+- 90
+- 91
+- 150
+- 444
+- 553
+- 554
+- 555
+- 556
+- 1024
+- 1025
+- 1026
+- 1030
+- 1032
+- 1108
+- 1554
+- 1935
+- 2151
+- 4524
+- 4554
+- 5050
+- 5501
+- 5543
+- 5544
+- 5554
+- 6554
+- 6667
+- 7000
+- 7070
+- 7447
+- 7554
+- 8000
+- 8001
+- 8002
+- 8080
+- 8081
+- 8085
+- 8088
+- 8151
+- 8282
+- 8484
+- 8554
+- 8555
+- 8557
+- 8888
+- 8899
+- 9002
+- 9008
+- 9550
+- 10082
+- 10554
+- 10600
+- 11018
+- 30002
+- 31391
+- 32772
+- 54713
+- 63063
+- 64001
+- 65152
+common_paths:
+- /
+- /live
+- /live.sdp
+- /h264_stream
+- /stream1
+- /Streaming/Channels/101
+common_creds:
+  usernames:
+  - ''
+  - admin
+  - root
+  - user
+  passwords:
+  - ''
+  - admin
+  - '12345'
+  - '123456'
+  - password
+vendors:
+- name: 255 Ip Cam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /0
+    - /1
+    - /ch0_0.h264
+    - /1/h264major
+    - /onvif1
+    - /video1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 2n Helios
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 307 Hi Silicon
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 360 Eye
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /11
+    - /0
+    - /live/ch00_0
+    - /LowResolutionVideo
+    - /live_mpeg4.sdp
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel=0&subtype=1
+    - /ch0_0.h264
+    - /cam/realmonitor?channel=8080&subtype=1
+    - /cam/realmonitor?channel=1&subtype=1
+    - /realmonitor?channel=0&stream=0.sdp
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 3eyes3
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 3g Ipcam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /stream_0
+    - /1/h264major
+    - /ch0_0.264
+    - /onvif1
+    - /1
+    - /live/ch00_0
+    - /cam{channel}/h264
+    - /tcp/av0_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 3r
+  banners: []
+  paths:
+    tcp:
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 3svision
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264
+    - /cam1/onvif-h264-1
+    - /11
+    - /cam{channel}/h264
+    - /cam1/mpeg4
+    - /cam2/mpeg4
+    - /cam3/mpeg4
+    - /cam4/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 3xlogic
+  banners: []
+  paths:
+    tcp:
+    - /video.h264
+    - /Streaming/Channels/1
+    - /
+    - /live/mpeg4
+    - /ch0_0.h264
+    - /11
+    - /stream0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 4er
+  banners: []
+  paths:
+    tcp:
+    - /live/av0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 4mp Ip Camera
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /h264_stream
+    - /onvif-stream2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 4sdot
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    - /live/av0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 4ucam
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 4xem
+  banners: []
+  paths:
+    tcp:
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 4xptz
+  banners: []
+  paths:
+    tcp:
+    - /live_mpeg4.sdp
+    - /stream0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 5mpbullet
+  banners: []
+  paths:
+    tcp:
+    - /Onvif/live/1/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 7links
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /ch0_0.h264
+    - /videoMain
+    - /Streaming/Channels/101
+    - /live/av0
+    - /av0_0
+    - /live1.264
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /Streaming/Channels/102
+    - /live/h264/ch0
+    - /11
+    - /Streaming/channels/401
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: 8level
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Abus
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /live.sdp
+    - /Streaming/Unicast/channels/101.sdp
+    - /Streaming/Unicast/channels/102.sdp
+    - /Streaming/Unicast/channels/202.sdp
+    - /Streaming/Unicast/channels/201.sdp
+    - /stream1
+    - /h264_stream
+    - /1
+    - /s2
+    - /Streaming/Channels/102
+    - /Streaming/Channels/101
+    - /0
+    - /video.h264
+    - /cam{channel}/h264
+    - /video.mp4
+    - /ch0_0.h264
+    - /11
+    - /VideoInput/{channel}/h264/1
+    - /Streaming/Channels/2
+    - /VideoInput/0/h264/1
+    - /mpeg4/media.amp?resolution=640x480
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Acti
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /onvif-stream1
+    - /
+    - /onvif-media/media.amp
+    - /cam{channel}/h264
+    - /h264
+    - /stream2
+    - /onvif&event&video2
+    - /onvif&event&video1
+    - /cgi-bin/cmd/encoder?GET_STREAM
+    - /onvif-stream2
+    - /onvif&event&audio&video1
+    - /cam0/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Adt
+  banners: []
+  paths:
+    tcp:
+    - /img/video.sav
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam4/mpeg4
+    - /cam/realmonitor?channel=2&subtype=1
+    - /11
+    - /cam/realmonitor?channel=0&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Agasio
+  banners: []
+  paths:
+    tcp:
+    - /videoMain
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Airlink
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    - /ipcam.sdp
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Airlive
+  banners: []
+  paths:
+    tcp:
+    - /rtsph2641080p
+    - /cam{channel}/h264
+    - /mpeg4/media.amp?resolution=640x480
+    - /media.amp
+    - /stream1
+    - /mobile
+    - /live1.264
+    - /video.pro1
+    - /live3.sdp
+    - /medias2
+    - /mpeg4
+    - /video.pro2
+    - /video.mp4
+    - /11
+    - /live
+    - /Video?Codec=MPEG4&Width=720&Height=576&Fps=30
+    - /live/stream1
+    - /ch0_0.h264
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Alecto
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /cam1/onvif-h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Alhua
+  banners: []
+  paths:
+    tcp:
+    - /live
+    - /cam/realmonitor
+    - /h264_stream
+    - /cam/realmonitor?channel=1&subtype=0
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46MzIyMzExNjEzMVNoYXl0YW4=
+    - /cam/realmonitor?channel={channel}&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Allnet
+  banners: []
+  paths:
+    tcp:
+    - /h264
+    - /live/mpeg4
+    - /Streaming/Channels/101
+    - /video.h264
+    - /mpeg4
+    - /live/h264
+    - /cam{channel}/h264
+    - /cam1/h264
+    - /Streaming/Channels/1
+    - /Streaming/Channels/2
+    - /video1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Amcrest
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=1&subtype=0
+    - /live
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel=6?subtype=0
+    - /h264Preview_05_main
+    - /h264Preview_06_main
+    - /h264Preview_02_main
+    - /h264Preview_01_main
+    - /cam/realmonitor?channel=1&subtype=1
+    - /
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46IUtlbndvb0QwMCU0MA==
+    - /cam/realmonitor?channel=1&subtype=0&authbasic=64
+    - /cam/realmonitor?channel=1?subtype=0
+    - /cam/realmonitor?channel=1&subtype=00
+    - /cam/realmonitor?channel=1&subtype=1&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=4&subtype=0
+    - /cam/realmonitor?channel=6&subtype=0
+    - /cam/realmonitor?channel=10&subtype=0
+    - /cam/realmonitor?channel=11&subtype=0
+    - /cam/realmonitor?channel=13&subtype=0
+    - /cam/realmonitor?channel=12&subtype=0
+    - /cam/realmonitor?channel=14&subtype=0
+    - /cam/realmonitor?channel=15&subtype=0
+    - /cam/realmonitor?channel=16&subtype=0
+    - /realmonitor
+    - /11
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46QW5ndSUyNEIzM2Y=
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46MTE3TGFrZXdvb2Q=
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46MzIyMzExNjEzMVNoYXl0YW4=
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46SlNub3cxMjM=
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46UCU0MGNrZXIlMjQyMg==
+    - /cam/realmonitor?channel=1&subtype=01
+    - /cam/realmonitor?channel=1&subtype=main
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46YWRtaW4x
+    - /rtsp
+    - /cam/realmonitor?channel=0&subtype=0
+    - /cam/realmonitor?channel=2&subtype=0
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46YWRtaW4=
+    - /cam/realmonitor?channel=31&subtype=0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Amovision
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /ch0_0.h264
+    - /Streaming/Channels/1
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Android
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /
+    - /h264.sdp
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Annke
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264-1
+    - /Streaming/Channels/101
+    - /1
+    - /11
+    - /cam1/onvif-h264
+    - /H264/ch1/sub/av_stream
+    - /H264/ch1/main/av_stream
+    - /2
+    - /Streaming/Channels/102/?transportmode=unicast.sdp
+    - /Streaming/Channels/101/?transportmode=unicast.sdp
+    - /onvif1
+    - /onvif2
+    - /Streaming/Channels/102
+    - /Streaming/channels/102
+    - /Streaming/channels/101
+    - /cam2/onvif-h264
+    - /Streaming/Unicast/channels/501
+    - /H265/ch1/main/av_stream
+    - /H265/ch1/sub/av_stream
+    - /0
+    - /Streaming/Unicast/channels/401
+    - /PSIA/Streaming/channels/{channel}
+    - /Streaming/Channels/201
+    - /video1
+    - /h265_stream
+    - /ch0_0.h264
+    - /h264/0/sub/av_stream
+    - /h264/0/main/av_stream
+    - /h264_stream
+    - /1/h264major
+    - /h264/ch1/main/av_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Anpviz
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /11
+    - /12
+    - /h264_stream
+    - /live/mpeg4
+    - /live/stream1
+    - /stream0
+    - /stream1
+    - /Streaming/Channels/101
+    - /Streaming/Channels/102
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Anran
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0_0.264
+    - /ch0_1.264
+    - /Streaming/Channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Apexis
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4/media.amp
+    - /av0_1
+    - /live/av0
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Arecont
+  banners: []
+  paths:
+    tcp:
+    - /PSIA/Streaming/channels/0?videoCodecType=H.264
+    - /h264.sdp
+    - /h264_stream
+    - /
+    - /ch0.h264
+    - /cam1/mpeg4
+    - /ch0_0.h264
+    - /h264.sdp?res=half&x0=0&y0=0&x1=1600&y1=1200&quality=15&doublescan=0&ssn=1340443365044&id=1340443379230
+    - /cam5/mpeg4
+    - /h264.sdp1?res=half&doublescan=0&ssn=901
+    - /0
+    - /onvif-media/media.amp
+    - /h264.sdp?res=full&x0=0&y0=0&x1=2048&y1=1536&qp=20&ratelimit=10000&doublescan=0&ssn=7329
+    - /cam1/onvif-h264
+    - /h264.sdp3?res=half&doublescan=0&ssn=603
+    - /h264.sdp1?res=half&doublescan=0&ssn=601
+    - /h264.sdp1
+    - /live/ch00_0
+    - /11
+    - /live/h264.sdp3
+    - /h264.sdp3
+    - /ONVIF/channel2
+    - /live/mpeg4
+    - /cam4/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Avtech
+  banners: []
+  paths:
+    tcp:
+    - /live/mpeg4
+    - /live/h264
+    - /1
+    - /live/h264_ulaw/VGA
+    - /live/h264/HD1080P
+    - /live/video_audio/profile1
+    - /live/h264/ch{channel}
+    - /h264.sdp
+    - /live/h264_ulaw/HD720P
+    - /live/video/profile1
+    - /live/video_audio/ch01/record
+    - /live/video_audio/ch01_ch01/pc
+    - /live/h264/SXGA
+    - /live/h264/HD1080
+    - /live/h264/ch0
+    - /live/video/profile3
+    - /11
+    - /live.h264
+    - /videoMain
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Axis
+  banners: []
+  paths:
+    tcp:
+    - /live3.sdp
+    - /onvif-media/media.amp
+    - /axis-media/media.amp?videocodec=h264&resolution=640x480
+    - /mpeg4/media.amp
+    - /axis-media/media.amp
+    - /Streaming/Channels/101
+    - /axis-media/media.amp?videocodec=mpeg4
+    - /axis-media/media.amp?videocodec=h264
+    - /ucast/12
+    - /mpeg4
+    - /live1.sdp
+    - /
+    - /live/ch00_0
+    - /axis-media/media.amp?
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: B-qtech
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ucast/11
+    - /ucast/12
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Barlus
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /1
+    - /Streaming/Channels/1
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Bascom
+  banners: []
+  paths:
+    tcp:
+    - /live/video_audio/profile1
+    - /live/video_audio/profile2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Basler
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    - /h264
+    - /0
+    - /jpeg
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Bcs
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /videoMain
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Besder
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /h264_stream
+    - /1
+    - /0/av0
+    - /0
+    - /onvif/live/1
+    - /1/h264major
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Beward
+  banners: []
+  paths:
+    tcp:
+    - /av0_0
+    - /av0_1
+    - /live/h264
+    - /h264
+    - /1
+    - /h264_1
+    - /tcp/av0_0
+    - /live/ch00_0
+    - /main
+    - /sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Bipcam
+  banners: []
+  paths:
+    tcp:
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Blitzwolf
+  banners: []
+  paths:
+    tcp:
+    - /1.3gp
+    - /2.3gp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Bluestork
+  banners: []
+  paths:
+    tcp:
+    - /1.3gp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Boavision
+  banners: []
+  paths:
+    tcp:
+    - /1/h264major
+    - /cam1/mpeg4
+    - /11
+    - /mpeg4/{channel}/media.amp
+    - /12
+    - /live/mpeg4
+    - /1
+    - /mpeg4/media.amp
+    - /stream/1/h264minor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Bosch
+  banners: []
+  paths:
+    tcp:
+    - /rtsp_tunnel
+    - /video.h264
+    - /11
+    - /ch0_0.h264
+    - /1/stream1/Profile1
+    - /h264
+    - /video
+    - /cgi-bin/rtspStream/{channel}
+    - /live/ch00_0
+    - /ch1-s1
+    - /live3.sdp
+    - /?inst=2
+    - /live/mpeg4
+    - /12
+    - /line=2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Brickcom
+  banners: []
+  paths:
+    tcp:
+    - /ONVIF/channel2
+    - /ONVIF/channel1
+    - /channel{channel}
+    - /ONVIF/channel3
+    - /h264
+    - /stream/bidirect/channel{channel}
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Brillcam
+  banners: []
+  paths:
+    tcp:
+    - /videoMain
+    - /0
+    - /live/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Bullet
+  banners: []
+  paths:
+    tcp:
+    - /ucast/11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Camhi
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264
+    - /11
+    - /2
+    - /1
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Canon
+  banners: []
+  paths:
+    tcp:
+    - /stream/profile2=r
+    - /cam{channel}/h264
+    - /stream/profile1=r
+    - /stream/profile0=r
+    - /profile1=u
+    - /profile1=r
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cantonk
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /Streaming/Channels/1
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cctv
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    - /live1.264
+    - /11
+    - /live0.264
+    - /av0_0
+    - /live/mpeg4
+    - /onvif1
+    - /0
+    - /cam3/mpeg4
+    - /cam1/mpeg4
+    - /cam4/mpeg4
+    - /live/h264/ch1
+    - /live/h264/ch4
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cctvhotdeals
+  banners: []
+  paths:
+    tcp:
+    - /cam{channel}/h264
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cdr King
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    - /ch0_0.h264
+    - /video.mp4
+    - /VideoInput/{channel}/h264/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: China
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1/cif
+    - /h264_stream
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /0
+    - /ucast/11
+    - /mpeg4cif
+    - /stream1
+    - /live1.264
+    - /videoMain
+    - /12
+    - /live0.264
+    - /cam{channel}/h264
+    - /ROH/channel/11
+    - /stream0
+    - /ch0_0.h264
+    - /h264/ch1/sub/av_stream
+    - /live/ch0
+    - /mpeg4
+    - /h264.sdp?res=half&x0=0&y0=0&x1=1600&y1=1200&quality=15&doublescan=0&ssn=1340443365044&id=1340443379230
+    - /live/ch00_1
+    - /ch0_0.264
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46MTE3TGFrZXdvb2Q=
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Chinavasion
+  banners: []
+  paths:
+    tcp:
+    - /cam4/mpeg4
+    - /0
+    - /ucast/11
+    - /live/0/MAIN
+    - /ch0_0.h264
+    - /onvif1
+    - /11
+    - /VideoInput/{channel}/h264/1
+    - /1/cif
+    - /cam/realmonitor?channel={channel}&subtype=00
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Chortau
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cisco
+  banners: []
+  paths:
+    tcp:
+    - /img/media.sav
+    - /[code]
+    - /img/video.sav
+    - /StreamingSetting?version=1.0&action=getRTSPStream&ChannelID=1&ChannelName=Channel1
+    - /live.sdp
+    - /11
+    - /play3.sdp
+    - /play1.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cloud Ip Camera
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /ch0_0.264
+    - /ch0_0.h264
+    - /0
+    - /h264_stream
+    - /0/av0
+    - /mpeg4
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cloudcam
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /0/av0
+    - /Streaming/Channels/2
+    - /mpeg4
+    - /cam{channel}/h264
+    - /live/stream1
+    - /main
+    - /cam0/h264
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Compro
+  banners: []
+  paths:
+    tcp:
+    - /medias{channel}
+    - /medias2
+    - /{channel}
+    - /cam{channel}/mjpeg
+    - /mpeg4/{channel}/media.amp
+    - /cgi-bin/rtspStream/{channel}
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Conceptronic
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /cam/realmonitor
+    - /12
+    - /11
+    - /live/ch2
+    - /cam/realmonitor?channel={channel}&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cooau
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cotier
+  banners: []
+  paths:
+    tcp:
+    - /live/mpeg4
+    - /mpeg4
+    - /ch01.264
+    - /Onvif/Streaming/2
+    - /11
+    - /0
+    - /ch01_sub.264
+    - /cam2/mpeg4
+    - /mpeg4cif
+    - /cam{channel}/h264
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Cp Plus
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /live
+    - /live/av0
+    - /VideoInput/1/mpeg4/1
+    - /live/channel1
+    - /live/channel0
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ctronics
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    - /12
+    - /ch01.264
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: D-link
+  banners: []
+  paths:
+    tcp:
+    - /live3.sdp
+    - /play2.sdp
+    - /live1.sdp
+    - /play1.sdp
+    - /live.sdp
+    - /live2.sdp
+    - /stream1
+    - /OVProfile01
+    - /live/profile.0
+    - /play3.sdp
+    - /OVProfile00
+    - /OVProfile02
+    - /1
+    - /11
+    - /h264_hd.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: D3d
+  banners: []
+  paths:
+    tcp:
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dahua
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /live
+    - /cam/realmonitor
+    - /cam/realmonitor?channel=1&subtype=1&unicast=true&proto=Onvif
+    - /VideoInput/1/mpeg4/1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /cam/realmonitor?channel=1&subtype=1
+    - /cam/realmonitor?channel=1&subtype=0
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live.sdp
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46MzIyMzExNjEzMVNoYXl0YW4=
+    - /
+    - /cam/realmonitor?channel=2&subtype=0
+    - /video.pro2
+    - /rtsp_live0
+    - /cam/realmonitor?channel=3&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel={channel}&subtype=01
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46RmVlZGIlNDBjazIwMjA=
+    - /cam/realmonitor?channel=6&subtype=1
+    - /cam/realmonitor?channel=1&subtype=2&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46c2VwcDQxMjM=
+    - /1/stream1/Profile1
+    - /cam/realmonitor?channel=1&subtype=2
+    - /tcp/av0_0
+    - /videoMain
+    - /cam/realmonitor?channel=2&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=3&subtype=0
+    - /cam/realmonitor?channel=3&subtype=1
+    - /h264_stream
+    - /cam/realmonitor?channel=4&subtype=00
+    - /11
+    - /cam/realmonitor?channel=1&%20subtype=0
+    - /cam/realmonitor?channel=1&subtype=1&unicast=false
+    - /live2.sdp
+    - /cam/realmonitor?channel=0&subtype=0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Db Power
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live/ch0
+    - /ucast/11
+    - /1.3gp
+    - /live/ch1
+    - /onvif1
+    - /ROH/channel/11
+    - /12
+    - /ucast/12
+    - /ch0_0.h264
+    - /0/av0
+    - /live.sdp
+    - /cam1/onvif-h264
+    - /H264
+    - /cam1/onvif-h264-1
+    - /mpeg4
+    - /cam/realmonitor?channel={channel}&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Denver
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /MediaInput/mpeg4
+    - /11/videostream.cgi
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dericam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0.h264
+    - /medias{channel}
+    - /ch0_0.h264
+    - /12
+    - /ONVIF/channel2
+    - /Streaming/Channels/1
+    - /cam{channel}/h264
+    - /live.sdp
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Digicom
+  banners: []
+  paths:
+    tcp:
+    - /image.mpg
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Digimerge
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /snl/live/1/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Digisol
+  banners: []
+  paths:
+    tcp:
+    - /ipcam_h264.sdp
+    - /ipcam.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Digital Watchdog
+  banners: []
+  paths:
+    tcp:
+    - /profile1
+    - /h264
+    - /rtsp/unicast/DefaultProfile-01
+    - /channel1
+    - /mjpeg
+    - /profile2
+    - /11
+    - /onvif/stream1
+    - /img/video.sav
+    - /img/media.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Digitus
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /11
+    - /ipcam_h264.sdp
+    - /live/h264
+    - /12
+    - /live/h264/ch{channel}
+    - /live/video/profile1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Digoo
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /onvif1
+    - /tcp/av0_0
+    - /1.3gp
+    - /cam{channel}/h264
+    - /0/av0
+    - /cam0/h264
+    - /ucast/11
+    - /h264_stream
+    - /
+    - /onvif
+    - /h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dinon
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dm365 Ipnc
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /Onvif/Streaming/2
+    - /1
+    - /PSIA/Streaming/channels/0
+    - /stream
+    - /PSIA/Streaming/channels/2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dome
+  banners: []
+  paths:
+    tcp:
+    - /ch01.264
+    - /ch0_0.h264
+    - /live/ch00_1
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dvr
+  banners: []
+  paths:
+    tcp:
+    - /live/mpeg4
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /11
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dvtel
+  banners: []
+  paths:
+    tcp:
+    - /h264
+    - /stream1
+    - /stream2
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Dynacolor
+  banners: []
+  paths:
+    tcp:
+    - /h264
+    - /h264_2
+    - /jpeg
+    - /cam{channel}/h264
+    - /cam0/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Easyn
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /12
+    - /live_h264.sdp
+    - /1/h264major
+    - /h264_stream
+    - /H264
+    - /Streaming/Channels/1
+    - /0/video{channel}
+    - /h264
+    - /tcp/av0_0
+    - /cam1/onvif-h264-1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Easyse
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264
+    - /live_h264.sdp
+    - /H264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ebode
+  banners: []
+  paths:
+    tcp:
+    - /videoMain
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Edimax
+  banners: []
+  paths:
+    tcp:
+    - /ipcam.sdp
+    - /ipcam_h264.sdp
+    - /ipcam_mjpeg.sdp
+    - /stream1
+    - /stream2
+    - /h264_stream
+    - /live1.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Elp
+  banners: []
+  paths:
+    tcp:
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Elro
+  banners: []
+  paths:
+    tcp:
+    - /av0_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Embedded Net Dvr
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/channels/702
+    - /Streaming/Unicast/channels/101
+    - /Streaming/Unicast/channels/301
+    - /Streaming/Unicast/channels/1301
+    - /Streaming/Unicast/channels/401
+    - /Streaming/Unicast/channels/201
+    - /Streaming/channels/101
+    - /Streaming/channels/201
+    - /Streaming/channels/301
+    - /Streaming/Unicast/channels/501
+    - /Streaming/Unicast/channels/601
+    - /Streaming/Unicast/channels/701
+    - /Streaming/Unicast/channels/801
+    - /Streaming/Unicast/channels/202
+    - /Streaming/channels/402
+    - /Streaming/channels/202
+    - /Streaming/channels/401
+    - /Streaming/channels/501
+    - /Streaming/channels/601
+    - /Streaming/channels/502
+    - /Streaming/channels/802
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Eminent
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Eneo
+  banners: []
+  paths:
+    tcp:
+    - /live1.sdp
+    - /1/stream1
+    - /1/stream2
+    - /stream{channel}
+    - /1/stream{channel}
+    - /ch1/stream0
+    - /live2.sdp
+    - /live/h264
+    - /cam0_{channel}
+    - /h264
+    - /h264_2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Escam
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    - /live0.264
+    - /onvif1
+    - /tcp/av0_0
+    - /Streaming/Channels/1
+    - /ch0_0.h264
+    - /live/ch00_1
+    - /realmonitor
+    - /cam{channel}/h264
+    - /live/ch00_0
+    - /live/h264/ch{channel}
+    - /ch01.264
+    - /img/video.sav
+    - /H264
+    - /ch01.264?dev=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Esky
+  banners: []
+  paths:
+    tcp:
+    - /H264
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Esp32
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Eufy
+  banners: []
+  paths:
+    tcp:
+    - /live0
+    - /live2
+    - /live1
+    - /live3
+    - /live4
+    - /11
+    - /img/media.sav
+    - /live0.264
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Everfocus
+  banners: []
+  paths:
+    tcp:
+    - /cgi-bin/rtspStreamOvf/1
+    - /live1.sdp
+    - /cgi-bin/rtspStreamOvf/0
+    - /streaming/channels/0
+    - /h264
+    - /cgi-bin/rtspStream/0
+    - /ch01/0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Eyecam
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /0
+    - /cam1/mpeg4
+    - /streaming/channels/0
+    - /CH002.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Eyeplus
+  banners: []
+  paths:
+    tcp:
+    - /0/av1
+    - /ch0_0.h264
+    - /cam{channel}/mpeg4
+    - /tcp/av0_0
+    - /onvif1
+    - /Onvif/live/1/1
+    - /onvif/live/1
+    - /onvif/live/2
+    - /stream2
+    - /cam1/onvif-h264
+    - /cam1/onvif-h264-1
+    - /0
+    - /rtsph2641080p
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Eyespy247
+  banners: []
+  paths:
+    tcp:
+    - /img/media.sav
+    - /img/video.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ezcam
+  banners: []
+  paths:
+    tcp:
+    - /live.sdp
+    - /11
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ezviz
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /
+    - /channel1
+    - /H.264
+    - /H_264
+    - /h265_stream
+    - /h264_stream
+    - /Channel/01
+    - /h.264
+    - /stream1
+    - /Streaming/Channels/1
+    - /channel0
+    - /1
+    - /cam1/onvif-h264
+    - /onvif1
+    - /cam/realmonitor
+    - /cam{channel}/h264
+    - /h_264
+    - /channel80
+    - /0
+    - /h264/ch1/main/av_stream
+    - /H.265
+    - /stream
+    - /cam0/mjpeg
+    - /mpeg4
+    - /Streaming/channels/201
+    - /channel{channel}
+    - //Channel/01
+    - /h.264_stream
+    - /h264_hd.sdp
+    - /Streaming/Channels/2
+    - /h.265
+    - /live/ch00_0
+    - /ch0_0.h264
+    - /h264
+    - /channel2
+    - /ch1/main
+    - /onvif/live/2
+    - /h265
+    - /ch0_0.264
+    - /HighResolutionVideo
+    - /0/av0
+    - /Streaming/Channels/101?transportmode=unicast&profile=Profile_2
+    - /Streaming/Channels/101?transportmode=unicast&profile=Profile_1
+    - /Streaming/Channels/102
+    - /live1.264
+    - /live_mpeg4.sdp
+    - /live/h264_ulaw/HD720P
+    - /video.mp4
+    - /cam1/mpeg4
+    - /cam101/h264
+    - /av_stream/ch0
+    - /h264/ch1/sub/av_stream
+    - /Streaming/Channels/101
+    - /streaming/Channels/201
+    - /h265Preview_01_main
+    - /cam1/h264
+    - /cam0/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Falcon
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Falcon Eye
+  banners: []
+  paths:
+    tcp:
+    - /mode=real&idc=1&ids=1
+    - /ch01.264?ptype=udp
+    - /live3.sdp
+    - /ch01_sub.264
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Faleemi
+  banners: []
+  paths:
+    tcp:
+    - /live/ch1
+    - /live/ch0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fanvil
+  banners: []
+  paths:
+    tcp:
+    - /stream.live0
+    - /stream.live1
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fayele
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /mpeg4
+    - /cam{channel}/mpeg4
+    - /mpeg4/media.amp?resolution=640x480
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fdt
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fenton
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fine
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /v2
+    - /mpeg4
+    - /stream2
+    - /s1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fisotech
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /cam1/onvif-h264
+    - /0
+    - /live_mpeg4.sdp
+    - /live/ch00_0
+    - /ch0_0.h264
+    - /cam/realmonitor?channel={channel}&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Flexwatch
+  banners: []
+  paths:
+    tcp:
+    - /cam0_{channel}
+    - /cam0_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Flir
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /stream1
+    - /stream2
+    - /ch0
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=QWRtaW46MTIzNA==
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46OFM9KmdjI2c=
+    - /mpeg4
+    - /avc
+    - /ch07/0
+    - /ch09/0
+    - /ch02/0
+    - /ch012/0
+    - /ch01/0
+    - /ch10/0
+    - /ch05
+    - /ch05/0
+    - /ch03/0
+    - /cam/realmonitor?channel=2&subtype=0
+    - /ir.1
+    - /ir.0
+    - /cam/realmonitor?channel=1&subtype=0
+    - /
+    - /cam/realmonitor?channel=4&subtype=0
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true
+    - /vis
+    - /wfov
+    - /ch04/0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Floureon
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /1/h264major
+    - /11
+    - /onvif1
+    - /1
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /tcp/av0_0
+    - /12
+    - /onvif2
+    - /mpeg4unicast
+    - /live/mpeg4
+    - /h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Focuscam
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Forticam
+  banners: []
+  paths:
+    tcp:
+    - /ONVIF/channel3
+    - /cam1/onvif-h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Foscam
+  banners: []
+  paths:
+    tcp:
+    - /videoSub
+    - /videoMain
+    - /ucast/11
+    - /H264
+    - /11
+    - /1
+    - /video.mp4
+    - /cam1/onvif-h264
+    - /2.3gp
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Fujtech
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /live/ch1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Funlux
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /tcp/av0_0
+    - /cam{channel}/h264
+    udp:
+    - /udp/av0_0
+  creds:
+    usernames: []
+    passwords: []
+- name: Funxwe
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /11
+    - /live/ch1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Gadnic
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /11
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Gadspot
+  banners: []
+  paths:
+    tcp:
+    - /ucast/11
+    - /video.mp4
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Galaxy
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ganz
+  banners: []
+  paths:
+    tcp:
+    - /ch0_unicast_firststream
+    - /gnz_media/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Geeni
+  banners: []
+  paths:
+    tcp:
+    - /live/main
+    - /stream_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Genbolt
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live/ch0
+    - /1
+    - /tcp/av0_0
+    - /live/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: General
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /Streaming/Channel/301/
+    - /Streaming/Channel/302/
+    - /Streaming/Channel/102/
+    - /Streaming/Channel/101/
+    - /Streaming/Channels/302/
+    - /Streaming/Channels/301/
+    - /Streaming/Channels/101/
+    - /Streaming/Channels/102/
+    - /Streaming/Channels/201/
+    - /Streaming/Channels/202/
+    - /Streaming/Channels/401/
+    - /Streaming/Channels/402/
+    - /Streaming/Channels/501/
+    - /Streaming/Channels/502/
+    - /Streaming/Channels/002/
+    - /Streaming/Channels/001/
+    - /11
+    - /live/main
+    - /streaming/mjpeg
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Generic
+  banners: []
+  paths:
+    tcp:
+    - /1
+    - /mpeg4cif
+    - /live/ch00_0
+    - /cam1/mpeg4
+    - /img/video.sav
+    - /live/ch00_1
+    - /mpeg4
+    - /profile1
+    - /ch0_0.h264
+    - /11
+    - /ucast/11
+    - /0/av0
+    - /realmonitor?channel=0&stream=0.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Genius
+  banners: []
+  paths:
+    tcp:
+    - /avn=2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Geovision
+  banners: []
+  paths:
+    tcp:
+    - /CH002.sdp
+    - /CH001.sdp
+    - /Streaming/Channels/1
+    - /0
+    - /CH00{channel}.sdp
+    - /media/video1
+    - /PSIA/Streaming/channels/1?videoCodecType=MPEG4
+    - /h264_stream
+    - /
+    - /rtsph2641080p
+    - /media2/video2
+    - /1
+    - /11
+    - /CH000.sdp
+    - //CH001.sdp
+    - /CH010.sdp
+    - /CH014.sdp
+    - /CH012.sdp
+    - /CH013.sdp
+    - /0/Pinology101:has2bepuyyps/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Goahead
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Grand
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /{channel}
+    - /cam{channel}/h264
+    - /live/main
+    - /{channel}/1:1/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Grandstream
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /1
+    - /2
+    - /3
+    - /ipcam_h264.sdp
+    - /{channel}
+    - /live
+    - /0/888888:888888/main
+    - /4
+    - /0/
+    - /cam{channel}/h264
+    - /ch0_0.h264
+    - /live/ch00_0
+    - /5
+    - /live/h264
+    - /ipcam:h264.sdp
+    - /media/media.amp
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Grandtec
+  banners: []
+  paths:
+    tcp:
+    - /{channel}
+    - /PSIA/Streaming/channels/0?videoCodecType=H.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Grundig
+  banners: []
+  paths:
+    tcp:
+    - /jpeg
+    - /h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Guangzhou
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /gnz_media/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Guudgo
+  banners: []
+  paths:
+    tcp:
+    - /0/av0
+    - /0/av1
+    - /cam{channel}/h264
+    - /h264_stream
+    - /
+    - /cam0/h264
+    - /onvif-stream2
+    - /live/ch01_0:554
+    - /11
+    - /1
+    - /cam/realmonitor
+    - /Streaming/Channels/1
+    - /onvif-stream1
+    - /live/ch00_1
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Gw Security
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4cif
+    - /mpeg4
+    - /0
+    - /live1.264
+    - /h264_stream
+    - /ch0_0.h264
+    - /cam{channel}/h264
+    - /Onvif/live/1/1
+    - /11
+    - /live/main
+    - /live/sub
+    - /H264
+    - /ch00/0
+    - /stream0
+    - /cam/realmonitor?channel=1&subtype=0
+    - /cam/realmonitor?channel=3&subtype=0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: H.264
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    - /GetData.cgi
+    - /11
+    - /live/ch00_1
+    - /live0.264
+    - /0
+    - /0/mobile2:818181/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: H.264 Network Dvr
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: H.view
+  banners: []
+  paths:
+    tcp:
+    - /live/main
+    - /onvif1
+    - /ch0_0.264
+    - /11
+    - /live/sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hd Ipc
+  banners: []
+  paths:
+    tcp:
+    - /live0.264
+    - /11
+    - /profile1
+    - /profile0
+    - /live1.264
+    - /H264
+    - /0
+    - /12
+    - /1
+    - /video.mp4
+    - /1/h264major
+    - /h264_stream
+    - /main
+    - /videoMain
+    - /onvif1
+    - /cam1/mpeg4
+    - /live.sdp
+    - /ucast/11
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hdipc
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Heden
+  banners: []
+  paths:
+    tcp:
+    - /videostream.asf
+    - /11
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Heimvision
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /h264_stream
+    - /0/av0
+    - /0
+    - /MainStream
+    - /
+    - /0/av1
+    - /live
+    - /11
+    - /SubStream
+    - /onvif1
+    - /live/av0
+    - /mpeg4/media.amp
+    - /1/h264major
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Herospeed
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /1
+    - /2
+    - /ch0_0.h264
+    - /cam1/onvif-h264
+    - /Onvif/live/1/1
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hikvision
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/101
+    - /H264
+    - /video.h264
+    - /HighResolutionVideo
+    - /mpeg4
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /1
+    - /Streaming/Channels/1
+    - /Streaming/Channels/102
+    - /Streaming/channels/201
+    - /Streaming/Channels/501
+    - /Streaming/Channels/301
+    - /Streaming/channels/101
+    - /Streaming/Channels/401
+    - /h264
+    - /Streaming/channels/401
+    - /ch0_0.h264
+    - /
+    - /Streaming/channels/102
+    - /h264/ch01/main/av_stream
+    - /cam1/mpeg4
+    - /mpeg4/media.amp?resolution=640x480
+    - /cam1/onvif-h264
+    - /11
+    - /live
+    - /Streaming/Channels/2
+    - /rtsph2641080p
+    - /LowResolutionVideo
+    - /live.sdp
+    - /videoMain
+    - /Streaming/Channels/103
+    - /PSIA/Streaming/channels/{channel}
+    - /h264/ch1/sub/
+    - /live3.sdp
+    - /0
+    - /cam1/onvif-h264-1
+    - /image.mpg
+    - /PSIA/Streaming/channels/1?videoCodecType=MPEG4
+    - /cam2/mpeg4
+    - /onvif1
+    - /h264_stream
+    - /live/ch0
+    - /live/ch00_0
+    - /cam{channel}/h264
+    - /live/h264
+    - /live.h264
+    - /live/h264/HD1080P
+    - /streaming/channels/101/
+    - /1/cif
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /live/av0
+    - /Streaming/Channel/101
+    - /ucast/11
+    - /h265_stream
+    - /av0_1
+    - /cam0/mjpeg
+    - /MPEG-4/ch1/main/av_stream
+    - /play1.sdp
+    - /ch1/main/av_stream
+    - /1/h264major
+    - /H264/ch1/main/av_stream
+    - /ISAPI/Streaming/channels/101/picture?videoResolutionWidth=2560&videoResolutionHeight=1440
+    - /streaming/channels/102?transportmode=unicast&profile=Profile_2
+    - /Video?Codec=MPEG4&Width=720&Height=576&Fps=30
+    - /h264Preview_01_sub
+    - /2
+    - /doc/index.html
+    - /Streaming/Channels/1/
+    - /Streaming/Channels/101/
+    - /onvif/live/2
+    - /H264/sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hilook
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /Streaming/Channels/101
+    - /h264
+    - /11
+    - /0
+    - /1
+    - /Streaming/Channels/302
+    - /Streaming/Channels/102
+    - /Streaming/Channels/301
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hipcam
+  banners:
+  - Hipcam RealServer
+  paths:
+    tcp:
+    - /11
+    - /1
+    - /tcp/av0_0
+    - /h264_stream
+    - /Streaming/Channels/{channel}
+    - /medias2
+    - /Streaming/Channels/1
+    udp:
+    - /udp/av0_0
+  creds:
+    usernames:
+    - admin
+    passwords:
+    - ''
+    - '12345'
+    - admin
+- name: Hiseeu
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /ch2_0.264
+    - /ch0_0.264
+    - /1
+    - /0
+    - /11
+    - /cam/realmonitor?channel=3&subtype=1
+    - /live/main
+    - /live/sub
+    - /ch0_1.264
+    - /live/ch0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hiwatch
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /Streaming/Channels/101
+    - /ISAPI/Streaming/Channels/101
+    - /11
+    - /1
+    - /2
+    - /mjpeg
+    - /h264_stream
+    - /Streaming/Channels/102
+    - /
+    - /ISAPI/Streaming/Channels/102
+    - /Onvif/live/1/1
+    - /cam0/mjpeg
+    - /cam/realmonitor
+    - /live/main
+    - /ucast/11
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Honeywell
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /cam/realmonitor?channel={channel}&subtype=01
+    - /img/video.sav
+    - /h264
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46QWRtaW4xMjMu
+    - /media
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46Qm91bG91ODEh
+    - /live2.sdp
+    - /live.sdp
+    - /cam{channel}/mpeg4
+    - /mpeg4
+    - /PSIA/Streaming/channels/{channel}
+    - /11
+    - /cam{channel}/h264
+    - /ch01.264
+    - /media/1/1/Profile1
+    - /img/media.sav
+    - /axis-media/media.amp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hootoo
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    - /0
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hosafe
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /cam{channel}/h264
+    - /live1.264
+    - /cam1/mpeg4
+    - /live0.264
+    - /live.sdp
+    - /ch0_0.h264
+    - /cam1/onvif-h264-1
+    - /11
+    - /onvif1
+    - /12
+    - /ucast/11
+    - /1
+    - /0
+    - /stream1
+    - /ch01.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Huacam
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /4
+    - /ch0_0.h264
+    - /VideoInput/{channel}/h264/1
+    - /cam{channel}/h264
+    - /video.mp4
+    - /LowResolutionVideo
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Huawei
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /LiveMedia/ch1/Media2
+    - /LiveMedia/ch1/Media1/trackID=1
+    - /live
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Hunt
+  banners: []
+  paths:
+    tcp:
+    - /v2
+    - /video1+audio1
+    - /
+    - /stream1
+    - /Streaming/Channels/2
+    - /Streaming/Channels/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Icam
+  banners: []
+  paths:
+    tcp:
+    - /img/video.sav
+    - /videoMain
+    - /0
+    - /live/ch0
+    - /11
+    - /ipcam.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Iegeek
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /onvif1
+    - /1/h264major
+    - /1
+    - /12
+    - /
+    - /live/1jfiegbr5yoeq_p0_FABRULIMVYCL
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Imou
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=1&subtype=1&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=1&subtype=0
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46bmljazEyMTk=
+    - /cam/realmonitor?channel=1&subtype=1
+    - /cam/realmonitor?channel=1&subtype=0&resolution=2560x1440
+    - /11
+    - /live
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46bWLuaWRvMjAyMy4=]
+    - /h264_stream
+    - /cam/realmonitor?channel=1&subtype=00
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46QmVlckNhbTM2NSU0MDExMQ==
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Inesun
+  banners: []
+  paths:
+    tcp:
+    - /MediaInput/mpeg4
+    - /1/h264major
+    - /mpeg4cif
+    - /cam1/mpeg4
+    - /h264major
+    - /h264minor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Inkovideo
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/2
+    - /11
+    - /22/
+    - /
+    - /22
+    - /live.sdp
+    - /ch0_0.h264
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /Streaming/Channels/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Instar
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live.sdp
+    - /
+    - /MediaInput/mpeg4
+    - /cam{channel}/h264
+    - /medias{channel}
+    - /12
+    - /livestream/11
+    - /livestream/13
+    - /13
+    - /livestream/12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Intelbras
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=3&subtype=00
+    - /cam/realmonitor?channel=4&subtype=0
+    - /cam/realmonitor?channel=2&subtype=1
+    - /cam/realmonitor?channel=4&subtype=1&authBasic=YWRtaW46KkFkMzFuMTV0UjJjWDAj
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=1&subtype=0
+    - /cam/realmonitor
+    - /11
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true
+    - /cam/realmonitor?channel=3&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /cam/realmonitor?channel=1&subtype=1&authBasic=YWRtaW46KkFkMzFuMTV0UjJjWDAj
+    - /cam/realmonitor?channel=2&subtype=1&authBasic=YWRtaW46KkFkMzFuMTV0UjJjWDAj
+    - /cam/realmonitor?channel=0&subtype=00
+    - /cam/realmonitor?channel=1&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Intellinet
+  banners: []
+  paths:
+    tcp:
+    - /video.mp4
+    - /video.pro1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Interlogix
+  banners: []
+  paths:
+    tcp:
+    - /video.h264
+    - /Streaming/Channels/2
+    - /ch0_0.h264
+    - /Streaming/Channels/1
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ipc
+  banners: []
+  paths:
+    tcp:
+    - /onvif1
+    - /ch0_1.264
+    - /ch0_0.264
+    - /ch1_s1
+    - /H264
+    - /cam/realmonitor?channel=0&subtype=1
+    - /1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /
+    - /ucast/12
+    - /cam/realmonitor
+    - /stream1
+    - /Preview_01_sub
+    - /live/mpeg4
+    - /ch0_0.h264
+    - /0
+    - /h264Preview_01_main
+    - /onvif_1550334450_285123146
+    - /MainStream
+    - /SubStream
+    - /onvif2
+    - /ch01/0
+    - /Streaming/Channels/1
+    - /1/h264major
+    - /1.video
+    - /0/888888:888888/main
+    - /live0.264
+    - /realmonitor
+    - /LiveMedia/ch1/Media1
+    - /live
+    - /id=0
+    - /stream2
+    - /12
+    - /ch01.264
+    - /media/video1
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /h264Preview_01_sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ipc-bo
+  banners: []
+  paths:
+    tcp:
+    - /h264Preview_06_sub
+    - /h264Preview_03_sub
+    - /h264Preview_11_sub
+    - /h264Preview_01_main
+    - /h264Preview_04_sub
+    - /h264Preview_01_sub
+    - /MainStream
+    - /h264Preview_03_main
+    - /h264Preview_02_main
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ipcam
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    - /stream_0
+    - /2
+    - /1
+    - /
+    - /live/1jfiegbrqhd4q_p0_FUZGACFWEXMY
+    - /live/1jfiegbrqop2a_p0_CNCOZJTHRMYP
+    - /live/1jfiegbrqop2a_p0_LBRUMVRZOQXB
+    - /live/1jfiegbrqop2a_p0_ISUOFYIAJSWB
+    - /LowResolutionVideo
+    - /HighResolutionVideo
+    - /0
+    - /live/mpeg4
+    - /video0.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ipcc
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /onvif1
+    - /mpeg4
+    - /12
+    - /ch0_0.h264
+    - /mpeg4cif
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ipnc
+  banners: []
+  paths:
+    tcp:
+    - /1.ch
+    - /h264main
+    - /PSIA/Streaming/channels/2
+    - /0
+    - /dev=IPC-00000000/media=0/channel=0&level=0
+    - /dev=IPC-00000000/media=0/channel=0&level=1
+    - /0.ch
+    - /1
+    - /video1
+    - /live.sdp
+    - /mjpeg
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ips
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    - /11
+    - /ch0_0.h264
+    - /ch0.h264
+    - /ch0_{channel}.H264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ipux
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Iq Eye
+  banners: []
+  paths:
+    tcp:
+    - /rtsp/onvif
+    - /rtsp/stream1
+    - /now.mp4
+    - /stream1
+    - /now.mp4&res=high
+    - /now.mp4&res=low
+    - /mp4
+    - /rtsp/now.mp4
+    - /rtsp/now.jpg
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Iris
+  banners: []
+  paths:
+    tcp:
+    - /img/media.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jalan
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /stream2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jaycar
+  banners: []
+  paths:
+    tcp:
+    - /0/av0
+    - /h264
+    - /11
+    - /cam{channel}/h264
+    - /live3.sdp
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jaytech
+  banners: []
+  paths:
+    tcp:
+    - /ONVIF/Streaming/channels/0_a/unicast
+    - /H264
+    - /av0_0
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jen-fu
+  banners: []
+  paths:
+    tcp:
+    - /v01
+    - /v03
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jenimex
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /mpeg4cif
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jennov
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /stream2
+    - /cam1/mpeg4
+    - /stream1
+    - /h264_stream
+    - /H.264
+    - /live/ch0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jetview
+  banners: []
+  paths:
+    tcp:
+    - /cam{channel}/h264
+    - /mpeg4
+    - /PSIA/Streaming/channels/h264
+    - /ch0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jidetech
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /1
+    - /1/h264major
+    - /11
+    - /mpeg4/{channel}/media.amp
+    - /cam2/mpeg4
+    - /cam{channel}/mpeg4
+    - /MediaInput/mpeg4
+    - /12
+    - /cam4/mpeg4
+    - /mpeg4/media.amp
+    - /2
+    - /cam0/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jienuo
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    - /ucast/12
+    - /ucast/11
+    - /onvif-stream2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jooan
+  banners: []
+  paths:
+    tcp:
+    - /1
+    - /stream1
+    - /live/ch00_1
+    - /
+    - /onvif1
+    - /11
+    - /onvif2
+    - /channel=1_stream=0.sdp
+    - /live/ch00_0
+    - /live/ch01_0
+    - /live/ch01_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jortan
+  banners: []
+  paths:
+    tcp:
+    - /realmonitor?channel=0&stream=0.sdp
+    - /cam/realmonitor?channel=0&subtype=01
+    - /onvif1
+    - /cam/realmonitor?channel=0&subtype=02
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jovision
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live1.264
+    - /live0.264
+    - /Streaming/Channels/1
+    - /0/cloud:Baltu912/main
+    - /h264
+    - /live3.sdp
+    - /live/h264
+    - /
+    - /live/1
+    - /live/0
+    - /live/2
+    - /medias2
+    - /0/admin:ZaZa1970/main
+    - /live_mpeg4.sdp
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jrc Tokki
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jtech
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /h264_stream
+    - /LowResolutionVideo
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Juan
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.264
+    - /live/ch1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Jvc
+  banners: []
+  paths:
+    tcp:
+    - /livestream
+    - /PSIA/Streaming/channels/0?videoCodecType=H.264
+    - /PSIA/Streaming/channels/{channel}
+    - /ch01_sub.264
+    - /video.h264
+    - /PSIA/Streaming/channels/{channel}?maxFrameRate=15
+    - /ONVIF/Streaming/channels/0_a/unicast
+    - /1/stream1
+    - /cam{channel}/mjpeg
+    - /v03
+    - /v02
+    - /rtsph2641080p
+    - /VideoInput/{channel}/h264/1
+    - /video.mp4
+    - /h264.sdp?res=half&x0=0&y0=0&x1=1600&y1=1200&quality=15&doublescan=0&ssn=1340443365044&id=1340443379230
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kadymay
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /live1.264
+    - /live0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kaikong
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /H264
+    - /live/ch00_0
+    - /live.sdp
+    - /12
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kare
+  banners: []
+  paths:
+    tcp:
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Keekoon
+  banners: []
+  paths:
+    tcp:
+    - /rtsp_live0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kenik
+  banners: []
+  paths:
+    tcp:
+    - /mode=real&idc=1&ids=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kenvs
+  banners: []
+  paths:
+    tcp:
+    - /ch0_1.264
+    - /cam1/mpeg4
+    - /VideoInput/{channel}/h264/1
+    - /ch0_0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Keview
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /h264_stream
+    - /stream1
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kguard
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /0
+    - /hiQ.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kingcam
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kkmoon
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /12
+    - /1
+    - /cam/realmonitor
+    - /live0.264
+    - /cam1/onvif-h264-1
+    - /0
+    - /VideoInput/1/mpeg4/1
+    - /cam1/mpeg4
+    - /live/ch0
+    - /stream0?
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Knc
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /stream0
+    - /Streaming/Channels/1
+    - /h264
+    - /live.sdp
+    - /Streaming/Channels/2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Knewmart
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Kogan
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /cam/realmonitor?channel={channel}&subtype=00
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Laview
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/channels/101
+    - /Streaming/Channels/1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /h264/ch01/main/av_stream
+    - /Streaming/Channels/101
+    - /
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /ipcam.sdp
+    - /ch0_0.h264
+    - /PSIA/streaming/channels/201
+    - /Streaming/Channels/2
+    - /Streaming/Channels/201
+    - /cam/realmonitor?channel=0&subtype=00
+    - /11
+    - /cam/realmonitor?channel=0&subtype=1
+    - /0
+    - /Streaming/Channels/102
+    - /Streaming/Channels/101/?transportmode=unicast.sdp
+    - /1
+    - /live/channel0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lc Security
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264-1
+    - /onvif-stream2
+    - /cam1/onvif-h264
+    - /h264_stream
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Leadtek
+  banners: []
+  paths:
+    tcp:
+    - /img/video.sav
+    - /media.amp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Leftek
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /1/h264major
+    - /live/mpeg4
+    - /2.3gp
+    - /mpeg4/{channel}/media.amp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lenovo
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Levelone
+  banners: []
+  paths:
+    tcp:
+    - /channel{channel}
+    - /channel1
+    - /live.sdp
+    - /h264
+    - /live1.sdp
+    - /onvif-stream1
+    - /img/video.sav
+    - /onvif&event&video1
+    - /video.mp4
+    - /onvif-stream2
+    - /cam{channel}/h264
+    - /Streaming/Channels/102
+    - /11
+    - /channel0
+    - /live3.sdp
+    - //Hauptstream
+    - /stream/bidirect/channel{channel}
+    - /img/media.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lg
+  banners: []
+  paths:
+    tcp:
+    - /video1+audio1
+    - /Master-0
+    - /Slave-0
+    - /camera.stm
+    - /live1.sdp
+    - /PSIA/Streaming/channels/2?videoCodecType=H.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Linksys
+  banners: []
+  paths:
+    tcp:
+    - /ONVIF/channel2
+    - /ONVIF/channel1
+    - /img/media.sav
+    - /video.mp4
+    - /img/video.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Loftek
+  banners: []
+  paths:
+    tcp:
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Logilink
+  banners: []
+  paths:
+    tcp:
+    - /live/h264
+    - /live/av0
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Logitech
+  banners: []
+  paths:
+    tcp:
+    - /HighResolutionVideo
+    - /LowResolutionVideo
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Longse
+  banners: []
+  paths:
+    tcp:
+    - /
+    - /0
+    - /ch0_0.h264
+    - /h264_stream
+    - /cam1/onvif-h264
+    - /11
+    - /cam/realmonitor
+    - /1
+    - /live/ch00_0
+    - /VideoInput/{channel}/h264/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Loosafe
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live0.264
+    - /cam3/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lorex
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=1&subtype=0
+    - /ch01/0
+    - /ch07/0
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /0
+    - /cam/realmonitor?channel=1&subtype=1
+    - /cam/realmonitor?channel=1&subtype=1;subtype:1
+    - /cam/realmonitor?channel=8&subtype=1
+    - /cam/realmonitor?channel=3&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=01
+    - /ch09/0
+    - /
+    - /cam/realmonitor
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /ch02/0
+    - /ch03/0
+    - /ch04/0
+    - /ch05/0
+    - /ch06/0
+    - /ch08/0
+    - /cam/realmonitor?channel=12
+    - /ch0_0.h264
+    - /cam/realmonitor?channel=11&subtype=1
+    - /cam/realmonitor?channel=12&subtype=1
+    - /cam/realmonitor?channel=13&subtype=1
+    - /cam/realmonitor?channel=14&subtype=1
+    - /cam/realmonitor?channel=15&subtype=1
+    - /video.mp4
+    - /Streaming/Channels/1
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46U3RyYXRmb3JkMjAyMQ==
+    - /cam/realmonitor?channel=8&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46Ymx1ZXByNTE2
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46RXdhVmFu
+    - /cam/realmonitor?channel=1?subtype=0
+    - /cam/realmonitor?channel=2&subtype=0
+    - /Video?Codec=MPEG4&Width=720&Height=576&Fps=30
+    - /Streaming/Channels/2
+    - /cam/realmonitor?channel=0&subtype=0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lowes Iris
+  banners: []
+  paths:
+    tcp:
+    - /img/media.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lts
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /live/ch0
+    - /HighResolutionVideo
+    - /LowResolutionVideo
+    - /Streaming/Channels/2
+    - /rtsph2641080p
+    - /Streaming/Channels/102
+    - /Streaming/Channels/101
+    - /live.h264
+    - /video.mp4
+    - //Streaming/Channels/1
+    - /h264_stream
+    - /channel{channel}
+    - /11
+    - /Streaming/Channels/103
+    - /Streaming/Channels/301
+    - /live3.sdp
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /live.sdp
+    - /3gpp
+    - /hiQ.sdp
+    - /GetData.cgi
+    - /h264/ch1/sub/
+    - /av0_{channel}
+    - /jpeg
+    - /cam{channel}/h264
+    - /Streaming/Unicast/channels/801
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Luma
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/channels/101
+    - /Streaming/channels/201
+    - /Streaming/Channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Luowice
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Lupus
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /v1
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=TWFpazpDYW0zTWFpazYq
+    - /cam/realmonitor?channel=1&subtype=0
+    - /
+    - /v2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Marmitek
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /mpeg4
+    - /Streaming/Channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Maygion
+  banners: []
+  paths:
+    tcp:
+    - /live_h264_1.sdp
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /h264
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Mediatech
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /live/ch1
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Mega-pixel
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /cam1/mpeg4
+    - /cam1/mjpeg
+    - /0
+    - /mpeg4
+    - /11
+    - /1/h264major
+    - /ch0_0.h264
+    - /tcp/av0_0
+    - /12
+    - /cam/realmonitor?channel={channel}&subtype=01
+    - /live_mpeg4_1.sdp
+    - /cam2/mpeg4
+    - /video1
+    - /cam{channel}/h264
+    - /ONVIF_1_a_unicast
+    - /ONVIF_1_unicast
+    - /mpeg4main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Merit Lilin
+  banners: []
+  paths:
+    tcp:
+    - /rtsph2641080p
+    - /rtsph264480p
+    - /rtspjpeg480p
+    - /rtsph264720p
+    - /rtspjpeg720p
+    - /rtspjpegcif
+    - /rtsph2643m
+    - /rtsph2645m
+    - /rtsph264960h
+    - /sub_{channel}
+    - /main_{channel}
+    - /rtsph264
+    - /rtsph2641024p
+    - /rtsph264sxga
+    - /cam1/mpeg4
+    - /rtspjpeg
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Messoa
+  banners: []
+  paths:
+    tcp:
+    - /h264
+    - /mpeg4
+    - /live/mpeg4
+    - /ch0_0.h264
+    - /livestream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Micronet
+  banners: []
+  paths:
+    tcp:
+    - /ipcam_h264.sdp
+    - /11
+    - /ipcam.sdp
+    - /h264
+    - /h264_2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Microseven
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ipcam_h264.sdp
+    - /12
+    - /cam1/onvif-h264
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Milesight
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /main
+    - /sub
+    - /
+    - /ch_101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Misecu
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Mobotix
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    - /stream0/mobotix.mjpeg
+    - /mobotix.h264
+    - /
+    - /onvif/mobotix.h264
+    - /stream/profile0
+    - /onvif/stream3/mobotix.mjpeg
+    - /stream1/mobotix.mjpeg
+    - /stream1/mobotix.mxg
+    - /stream0/mobotix.mxg
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Momentum
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /videoMain
+    - /video.h264
+    - /cam1/onvif-h264
+    - /H264/sub
+    - /medias2
+    - /11
+    - /h264_stream
+    - /mpeg4/{channel}/media.amp
+    - /live/av0
+    - /live/ch00_0
+    - /Streaming/Channels/1
+    - /live3.sdp
+    - /cam{channel}/h264
+    - /live.sdp
+    - /cam1/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Motioneye
+  banners: []
+  paths:
+    tcp:
+    - /live/video/profile1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Motorola
+  banners: []
+  paths:
+    tcp:
+    - /h264_ulaw.sdp
+    - /blinkhd
+    - /h264_pcm.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Mustcam
+  banners: []
+  paths:
+    tcp:
+    - /rtsp_live0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Mv Power
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /h264_stream
+    - /live0.264
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nedis
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/101
+    - /Streaming/Channels/102
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Neewer
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /live3.sdp
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Neo Coolcam
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    - /LowResolutionVideo
+    - /0/av1
+    - /cam{channel}/h264
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /ch0_0.h264
+    - /medias2
+    - /ipcam.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Netcam
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /tcp/av0_1
+    - /11
+    - /{channel}/1:1/main
+    - /live/ch00_0
+    - /live/ch1
+    - /live/ch0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Netcat
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Netsurveillance Dvr H.264 Network Video Recorder
+  banners: []
+  paths:
+    tcp:
+    - /GetData.cgi
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Neutron
+  banners: []
+  paths:
+    tcp:
+    - /media/video1
+    - /media/video3
+    - /cam/realmonitor
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /cam/realmonitor?channel={channel}&subtype=01
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nexcom
+  banners: []
+  paths:
+    tcp:
+    - /media.amp
+    - /live/stream1
+    - /live0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nexgadget
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /tcp/av0_0
+    - /live/ch1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nexus
+  banners: []
+  paths:
+    tcp:
+    - /ucast/11
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nexus Cctv
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /ucast/12
+    - /ucast/11
+    - /mpeg4
+    - /ROH/channel/11
+    - /11
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nexxt Solution
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/channels/401
+    - /Streaming/channels/501
+    - /Streaming/channels/601
+    - /Streaming/channels/201
+    - /live/ch00_0
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Night Owl
+  banners: []
+  paths:
+    tcp:
+    - /ch1_1.264
+    - /ch2_1.264
+    - /ch3_1.264
+    - /Streaming/channels/301
+    - /ch0_1.264
+    - /ch0_0.264
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Novicam
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /Streaming/Channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Novus
+  banners: []
+  paths:
+    tcp:
+    - /profile1
+    - /cam{channel}/h264
+    - /cam1/h264
+    - /cam0/h264
+    - /
+    - /profile2
+    - /H264?ch=1&subtype=0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nvr
+  banners: []
+  paths:
+    tcp:
+    - /ch01.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nvsip
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /11
+    - /live0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Nvt
+  banners: []
+  paths:
+    tcp:
+    - /mode=real&idc=1&ids=1
+    - /streamtype=0
+    - /
+    - /mpeg4cif
+    - /live/ch0
+    - /h264_stream
+    - /Streaming/Channels/2
+    - /Streaming/Channels/1
+    - /stream/0:1
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Odesys
+  banners: []
+  paths:
+    tcp:
+    - /media/media.amp
+    - /img/media.sav
+    - /media.amp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Oemcameras
+  banners: []
+  paths:
+    tcp:
+    - /cam4/mpeg4
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Office One
+  banners: []
+  paths:
+    tcp:
+    - /HighResolutionVideo
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Omny
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /0
+    - /1
+    - /onvif1
+    - /live/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Oncam Grandeye
+  banners: []
+  paths:
+    tcp:
+    - /video.mp4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Onvif
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    - /mpeg4cif
+    - /profile1
+    - /stream0
+    - /0
+    - /live/ch00_0
+    - /profile2
+    - /h264_stream
+    - /live/0/MAIN
+    - /1
+    - /live/main
+    - /cam/realmonitor
+    - /profile0
+    - /stream1
+    - /h264
+    - /tcp/av0_0
+    - /live/ch00_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Onwote
+  banners: []
+  paths:
+    tcp:
+    - /stream0
+    - /h264_stream
+    - /live/0/h264.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Oossxx
+  banners: []
+  paths:
+    tcp:
+    - /ch0_1.264
+    - /11
+    - /ch0_0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Optica Video
+  banners: []
+  paths:
+    tcp:
+    - /cam{channel}/h264
+    - /videoMain
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Opticam
+  banners: []
+  paths:
+    tcp:
+    - /videoMain
+    - /cam0_0
+    - /videoSub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Orient
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264-1
+    - /video
+    - /live
+    - /11
+    - /0
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Orion
+  banners: []
+  paths:
+    tcp:
+    - /live/main
+    - /live.sdp
+    - /stream0
+    - /stream{channel}
+    - /cam4/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Other
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/channels/601
+    - /cam1/mpeg4
+    - /11
+    - /1
+    - /Streaming/Channels/102
+    - /0
+    - /mpeg4
+    - /onvif/profile2/media.smp
+    - //h264Preview_01_sub
+    - //h265Preview_01_main
+    - /live/main
+    - /Streaming/channels/301
+    - /onvif1
+    - /ch01/0
+    - /live/ch00_0
+    - /stream1
+    - /video1
+    - /cam/realmonitor?channel=1&subtype=1
+    - /cam/realmonitor?channel=1&subtype=0
+    - /live_mpeg4.sdp
+    - /live/ch0
+    - /cam2/mpeg4
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46MzIyMzExNjEzMVNoYXl0YW4=
+    - /h264_stream
+    - /cam/realmonitor?channel=0&subtype=1
+    - /Onvif/live/1/1
+    - /stream_0
+    - /H.264
+    - /video.pro1
+    - /videoMain
+    - /live.sdp
+    - /s0
+    - /live/ch1
+    - /cam/realmonitor?channel=3&subtype=0
+    - /h264
+    - /ip0/1/
+    - /onvif-stream2
+    - /8/cff0e9638e8b1682:123456/main
+    - /stream=1
+    - /Streaming/Channels/101
+    - /hiQ.sdp
+    - /mpeg4/0/media.amp
+    - /ch0_0.h264
+    - /Streaming/Channels/1
+    - /1/h264major
+    - /live
+    - /cam4/mpeg4
+    - /cam1/onvif-h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ouvis
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /tcp/av0_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Overmax
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /live/ch0
+    - /1.3gp
+    - /tcp/av0_1
+    - /onvif2
+    - /live1.264
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ovislink
+  banners: []
+  paths:
+    tcp:
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Owsoo
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: P2p
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /onvif1
+    - /live/ch0
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Panasonic
+  banners: []
+  paths:
+    tcp:
+    - /ONVIF/MediaInput
+    - /MediaInput/h264
+    - /MediaInput/h264/stream_1
+    - /nphMpeg4/g726-640x48
+    - /MediaInput/mpeg4
+    - /MediaInput/h264/stream_2
+    - /ONVIF/MediaInput?profile=1_def_profile6
+    - /VideoInput/0/h264/1
+    - /VideoInput/{channel}/h264/1
+    - /cam/realmonitor
+    - /cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live.sdp
+    - /VideoInput/1/h264/1
+    - /src/mediainput/stream_1
+    - /src/mediainput/stream_3
+    - /ONVIF/MediaInput?profile=def_profile1
+    - /ONVIF/MediaInput?profile=def_profile2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Pelco
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /stream2
+    - /1/stream1
+    - /LowResolutionVideo
+    - /sstream1
+    - /stream{channel}
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Pelco Sarix
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /stream2
+    - /1/stream1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Pheenet
+  banners: []
+  paths:
+    tcp:
+    - /live
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Phylink
+  banners: []
+  paths:
+    tcp:
+    - /live/0/onvif.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Pixord
+  banners: []
+  paths:
+    tcp:
+    - /video.h264
+    - /v01
+    - /track{channel}
+    - /ch0_0.264
+    - /11
+    - /live/av0
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Planet
+  banners: []
+  paths:
+    tcp:
+    - /ipcam.sdp
+    - /stander/livestream/0/1
+    - /stander/livestream/0/0
+    - /v2
+    - /stream1
+    - /jpeg
+    - /axis-media/media.amp?videocodec=h264&resolution=640x480
+    - /cam{channel}/h264
+    - /
+    - /11
+    - /h264
+    - /img/media.sav
+    - /ipcam_h264.sdp
+    - /live.sdp
+    - /media/media.amp
+    - /h264/ch1/sub/
+    - /live1.sdp
+    - /video
+    - /onvif-stream2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Planex
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /strm1
+    - /stream1
+    - /stream
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Plenty
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Plv
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Pni
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /11
+    - /video.mp4
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Polyvision
+  banners: []
+  paths:
+    tcp:
+    - /live/sub
+    - /live/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Praxis
+  banners: []
+  paths:
+    tcp:
+    - /axis-media/media.amp
+    - /mpeg4/media.amp
+    - /axis-media/media.amp?videocodec=h264&resolution=640x480
+    - /onvif-media/media.amp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Provision
+  banners: []
+  paths:
+    tcp:
+    - /profile1
+    - /11
+    - /profile3
+    - /tcp/av0_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ptzoptics
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /1
+    - /
+    - /cam1/mpeg4
+    - /live/stream0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Q-nest
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Q-see
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor
+    - /PSIA/Streaming/channels/0?videoCodecType=H.264
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /
+    - /cam/realmonitor?channel=1&subtype=0
+    - /cam/realmonitor?channel=1&subtype=1
+    - /profile1
+    - /live.sdp
+    - /ch0_unicast_firststream
+    - /VideoInput/1/mpeg4/1
+    - /VideoInput/1/h264/1
+    - /{channel}
+    - /cam/realmonitor?channel=1&subtype=1&unicast=true&proto=Onvif
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Q6 Wifi Smart Camera
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_01
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qavi
+  banners: []
+  paths:
+    tcp:
+    - /av0_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qbus
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qcam
+  banners: []
+  paths:
+    tcp:
+    - /h264Preview_01_main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qgs
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qihan
+  banners: []
+  paths:
+    tcp:
+    - /tcp_live/ch0_1
+    - /LowResolutionVideo
+    - /tcp_live/ch0_0
+    - /live.sdp
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qnap
+  banners: []
+  paths:
+    tcp:
+    - /cam{channel}/mjpeg
+    - /video.mp4
+    - /cam{channel}/mpeg4
+    - /live/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qtech
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    - /H264
+    - /H264?ch=1&subtype=0
+    - /H264?ch=1&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qualcomm Incorporated
+  banners: []
+  paths:
+    tcp:
+    - /h264Preview_01_sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qube
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Questek
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Qvis
+  banners: []
+  paths:
+    tcp:
+    - /av0_0
+    - /cam/realmonitor?channel=1&subtype=1&unicast=true&proto=Onvif
+    - /ucast/11
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: R-tech
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Raspberry Pi
+  banners: []
+  paths:
+    tcp:
+    - /unicast
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Raster
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264-1
+    - /media/media.amp
+    - /cam1/onvif-h264
+    - /cam{channel}/h264
+    - /rtsph2641080p
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Raysharp
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /ch00/1
+    - /ch1/0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Reobiux
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Reolink
+  banners: []
+  paths:
+    tcp:
+    - /h264Preview_01_sub
+    - /h264Preview_01_main
+    - /
+    - /h264Preview_02_main
+    - /ucast/12
+    - /h264Preview_04_main
+    - //h264Preview_01_sub
+    - //h264Preview_01_main
+    - //h265Preview_01_main
+    - /h265Preview_01_main
+    - /h264Main_08_sub
+    - /h264Preview_08_sub
+    - /stream1
+    - /Salon/mainstream
+    - //h264Preview_04_main
+    - /h264Preview_02_sub
+    - /h264Preview_03_main
+    - /h264Preview_03_sub
+    - /h264Preview_04_sub
+    - /11
+    - /Preview_01_main
+    - /h264
+    - /h264Preview_01_sup
+    - /h265Preview_01_sub
+    - /videoSub
+    - /live
+    - //h265Preview_01_sub
+    - /e1/subStream
+    - /e1/mainStream
+    - /livingroom/mainStream
+    - /CarPort/mainStream
+    - /mpeg4/media.amp?resolution=640x480
+    - /cam/realmonitor?channel=1&subtype=1
+    - /cam/realmonitor?channel=1&subtype=0
+    - /h264Preview_05_main
+    - /h264Preview_05_sub
+    - /h264Preview_09_sub
+    - /1/h264major
+    - /h264Preview_06_sub
+    - /h264Preview_07_sub
+    - /h264Preview_07_main
+    - /ch0_0.h264
+    - /s0
+    - /videoMain
+    - /:554/h264Preview_01_main
+    - /h264_stream
+    - /dome/subStream
+    - /dome/mainStream
+    - /img/media.sav
+    - /1
+    - /0
+    - /ROH/channel/11
+    - /media/video1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Revo
+  banners: []
+  paths:
+    tcp:
+    - /live0.264
+    - /1/stream1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Revodata
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /profile0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Revotech
+  banners: []
+  paths:
+    tcp:
+    - /
+    - /live1.264
+    - /12
+    - /11
+    - /cam{channel}/h264
+    - /1/stream1
+    - /stream1
+    - /cam1/mpeg4
+    - /profile0
+    - /live0.264
+    - /cam0/h264
+    - /profile1
+    - /ch0_0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ring
+  banners: []
+  paths:
+    tcp:
+    - /343ea4d97645_live
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Robaxo
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=01
+    - /Streaming/Channels/102
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Rocam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /0
+    - /cam1/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Rohs
+  banners: []
+  paths:
+    tcp:
+    - /1/h264major
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Roline
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/101
+    - /Streaming/Channels/1
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Rosewill
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    - /video1+audio1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Rtt
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Rtx
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live3.sdp
+    - /ch0_0.h264
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Rvi
+  banners: []
+  paths:
+    tcp:
+    - /RVi/1/1
+    - /RVi/1/2
+    - /VideoInput/1/h264/1
+    - /Streaming/Channels/101
+    - /Streaming/channels/201
+    - /Streaming/Channels/1
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=YWRtaW46UFAxNTMzMDY=
+    - /channel3
+    - /channel1
+    - /cam/realmonitor
+    - /Streaming/Channels/2
+    - /Streaming/channels/101
+    - /video.h264
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /RVi/2/1
+    - /cam/realmonitor?channel=1&subtype=0
+    - /1/2?transmode=unicast&profile=vam
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Safehome
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /onvif-stream1
+    - /live/ch0
+    - /live/ch1
+    - /ch0_0.h264
+    - /0/video0
+    - /h264
+    - /H264
+    - /LowResolutionVideo
+    - /Streaming/channels/101
+    - /cam{channel}/h264
+    - /cam/realmonitor
+    - /cam1/onvif-h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Samsung
+  banners: []
+  paths:
+    tcp:
+    - /onvif/profile1/media.smp
+    - /onvif/profile4/media.smp
+    - /h264_pcm.sdp
+    - /
+    - /1
+    - /Streaming/Channels/1
+    - /h264.sdp
+    - /profile5/media.smp
+    - /onvif/profile5/media.smp
+    - /onvif/profile2/media.smp
+    - /profile2/media.smp
+    - /cam{channel}/h264
+    - /live/ch00_0
+    - /live/h264/ch{channel}
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /mpeg4unicast
+    - /MediaInput/h264
+    - /profile{channel}/media.smp
+    - /mpeg4/{channel}/media.amp
+    - /0
+    - /2
+    - /3
+    - /4
+    - /5
+    - /6
+    - /7
+    - /8
+    - /9
+    - /10
+    - /11
+    - /12
+    - /13
+    - /14
+    - /15
+    - /profile4/media.smp
+    - /onvif/profile6/media.smp
+    - /mjpeg/media.smp
+    - /MJPEG/media.smp
+    - /H264/media.smp
+    - /profile1/media.smp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sannce
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /Streaming/Unicast/channels/101
+    - /12
+    - /ch0_0.h264
+    - /1/h264major
+    - /live_mpeg4.sdp
+    - /MediaInput/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sercomm
+  banners: []
+  paths:
+    tcp:
+    - /img/video.sav
+    - /img/media.sav
+    - /live
+    - /stream_2
+    - /stream_1
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Shenzhen
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /H264
+    - /mpeg4
+    - /live/ch0
+    - /live/ch00_0
+    - /0
+    - /4
+    - /1
+    - /H264/ch0/raw/av_stream
+    - /live/ch00_1
+    - /H264/ch1/main/av_stream
+    - /ucast/11
+    - /stream1
+    - /tcp/av0_0
+    - /?chID=2&streamType=main&linkType=tcp
+    - /ch0_0.h264
+    - /live/ch1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sinocam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ucast/11
+    - /ucast/12
+    - /ROH/channel/11
+    - /cam/realmonitor
+    - /ch0_1.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Smartwares
+  banners: []
+  paths:
+    tcp:
+    - //live/av0?
+    - /live/av0
+    - /live/av0?
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Smc
+  banners: []
+  paths:
+    tcp:
+    - /img/media.sav
+    - /video.mp4
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sony
+  banners: []
+  paths:
+    tcp:
+    - /media/video1
+    - /media/video2
+    - /profile
+    - /av0_0
+    - /live1.264
+    - /mjpeg
+    - /video1
+    - /11
+    - /videoinput_1:0/h264_1/onvif.stm
+    - /h264_stream
+    - /1
+    - /live/mpeg4
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam1/onvif-h264
+    - /image.mpg
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Speco
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /
+    - /ch01/0
+    - /ch01/1
+    - /Master-0
+    - /main_1
+    - /mpeg4
+    - /11
+    - /profile2
+    - /chID=3&streamType=main&linkType=tcp
+    - /cam{channel}/h264
+    - /Live/Channel={channel}
+    - /1/stream1
+    - /stream0/Channel=0;Profile=0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sricam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /onvif1
+    - /live/mpeg4
+    - /profile0
+    - /rtsp_live1
+    - /onvif2
+    - /ucast/11
+    - /ucast/12
+    - /1/h264major
+    - /cam1/mpeg4
+    - /1
+    - /mpeg4/media.amp?resolution=640x480
+    - /onvif-stream2
+    - /stream1
+    - /profile1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sricctv
+  banners: []
+  paths:
+    tcp:
+    - /onvif1
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Srihome
+  banners: []
+  paths:
+    tcp:
+    - /1/h264major
+    - /cam1/mpeg4
+    - /profile0
+    - /onvif-stream1
+    - /cam/realmonitor
+    - /cam5/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Suneyes
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /tcp/av0_0
+    - /H264
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sunluxy
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /ucast/12
+    - /onvif1
+    - /tcp/av0_1
+    - /ucast/11
+    - /11
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Supra Space
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Sv3c
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /h264_stream
+    - /stream0
+    - /mpeg4
+    - /1
+    - /cam1/mpeg4
+    - /0/TTTT-748045-HBNGS:ChickensRock21/main
+    - /0/IPCAM:Summer_2021/main
+    - /tcp/av0_0
+    - /VideoInput/1/mpeg4/1
+    - /stream1
+    - /Streaming/Channels/101
+    - /live/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Swann
+  banners: []
+  paths:
+    tcp:
+    - /ch04/1
+    - /ch01/1
+    - /ch02/0
+    - /live/h264
+    - /ch07/0
+    - /ch06/0
+    - /mpeg4
+    - /h264Preview_01_sub
+    - /ch04/01
+    - /ch01/0
+    - /ch03/0
+    - /h264Preview_01_main
+    - /ch02/1
+    - /ch03/1
+    - /ch05/1
+    - /Streaming/Channels/101
+    - /Streaming/Channels/102
+    - /Streaming/Channels/1
+    - /live.sdp
+    - /live3.sdp
+    - /cam1/onvif-h264
+    - /ch00/0
+    - /ch04/0
+    - /Streaming/Unicast/channels/401
+    - /Streaming/channels/101
+    - /Streaming/Channels/701
+    - /Streaming/Channels/601
+    - /Streaming/Unicast/channels/101
+    - /Streaming/Channels/301
+    - /Streaming/Unicast/channels/201
+    - /ch08/0
+    - /H264/ch1/main/av_stream
+    - /H264/ch1/sub/av_stream
+    - /H264/ch2/sub/av_stream
+    - /H264/ch3/sub/av_stream
+    - /H264/ch2/main/av_stream
+    - /H264/ch3/main/av_stream
+    - /H264/ch4/main/av_stream
+    - /12
+    - /11
+    - /ch06/1
+    - /0
+    - /ch0_0.h264
+    - /rtsp/streaming?channel=6&subtype=0
+    - /rtsp/streaming?channel=8&subtype=0
+    - /rtsp/streaming?channel=11&subtype=0
+    - /Streaming/Channel1/102
+    - /Camera%201/Channel1/1
+    - /live/h264/HD1080P
+    - /cam1/mpeg4
+    - /{channel}
+    - /Streaming/Channels/2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Szneo
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /cam/realmonitor
+    - /VideoInput/{channel}/h264/1
+    - /12
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /ch0_0.h264
+    - /cam1/onvif-h264
+    - /ipcam.sdp
+    - /live/mpeg4
+    - /cam{channel}/h264
+    - /av0_1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Szsinocam
+  banners: []
+  paths:
+    tcp:
+    - /ROH/channel/11
+    - /11
+    - /1
+    - /ucast/11
+    - /ucast/12
+    - /
+    - /cam/realmonitor
+    - /stream1
+    - /live0.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tapo
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /onvif/stream1
+    - /stream2
+    - /live/stream1
+    - /1/stream1
+    - /onvif/stream2
+    - /
+    - /stream2%20640%20x%20360
+    - /live/stream2
+    - /stream11
+    - /video.h264
+    - /1
+    - /Stream1
+    - /Streaming/Channels/1
+    - /stream=1
+    - /11
+    - /stream1r
+    - /0/av0
+    - /stream8
+    - /onvif1
+    - /tcp/av0_0
+    - /H264/sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Techage
+  banners: []
+  paths:
+    tcp:
+    - /onvif1
+    - /0
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Techview
+  banners: []
+  paths:
+    tcp:
+    - /12
+    - /11
+    - /0/av0
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tenda
+  banners:
+  - Tenda
+  paths:
+    tcp:
+    - /tenda
+    - /11
+    - /ch=1?subtype=0
+    - /0
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /profile0
+    udp: []
+  creds:
+    usernames:
+    - admin
+    passwords:
+    - admin123456
+- name: Tenvis
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /12
+    - /videostream.asf
+    - /onvif1
+    - /image.mpg
+    - /0/video0
+    - /0/av0
+    - /ch0_0.h264
+    - /0/av1
+    - /Streaming/Channels/1
+    - /cam3/mpeg4
+    - /cam2/mpeg4
+    - /rtsp_live1
+    - /live/h264/ch{channel}
+    - /video{channel}
+    - /LowResolutionVideo
+    - /Video?Codec=MPEG4&Width=720&Height=576&Fps=30
+    - /cam{channel}/h264
+    - /0/video1
+    - /1
+    - /h264_stream
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live.sdp
+    - /av2
+    - /nph-h264.cgi
+    - /medias{channel}
+    - /video0
+    - /ucast/11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tiandy
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live3.sdp
+    - /h264_stream
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Titathink
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1.3gp
+    - /live/0/onvif.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tmezon
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4
+    - /1
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tonton
+  banners: []
+  paths:
+    tcp:
+    - /
+    - /11
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Topcam
+  banners: []
+  paths:
+    tcp:
+    - /ONVIF/channel1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Topica Cctv
+  banners: []
+  paths:
+    tcp:
+    - /live0.264
+    - /av2
+    - /h264/media.amp
+    - /live/mpeg4
+    - /1
+    - /cam1/mpeg4
+    - /cam{channel}/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Toshiba
+  banners: []
+  paths:
+    tcp:
+    - /live3.sdp
+    - /live.sdp
+    - /live2.sdp
+    - /live4.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tp-ipc
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /stream2
+    - /
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Tp-link
+  banners: []
+  paths:
+    tcp:
+    - /stream1
+    - /Streaming/Channels/1
+    - /video.mp4
+    - /video.pro1
+    - /video.pro2
+    - /video.pro3
+    - /live0.264
+    - /video.mjpg
+    - /video.h264
+    - /stream2
+    - /h264_vga.sdp
+    - /h264_hd.sdp
+    - /mpeg4
+    - /11
+    - /
+    - /live/stream1
+    - /Camera%201
+    - /1/stream1/Profile1
+    - /cam/realmonitor?channel=0&subtype=1
+    - /onvif/stream1
+    - /onvif-stream2
+    - /live/stream1?channel=2
+    - /media.amp
+    - /cam{channel}/h264
+    - /live3.sdp
+    - /live.sdp
+    - /live/stream2
+    - /stream8
+    - /onvif/stream2
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /tcp/av0_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Trassir
+  banners: []
+  paths:
+    tcp:
+    - /live/main
+    - /live/sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Trendnet
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/1
+    - /PSIA/Streaming/channels/1?videoCodecType=MPEG4
+    - /ch0_0.h264
+    - /cam1/mpeg4
+    - /mpeg4
+    - /VideoInput/{channel}/h264/1
+    - /Streaming/Channels/2
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live/h264/ch{channel}
+    - /cam1/onvif-h264
+    - /play1.sdp
+    - /cam{channel}/h264
+    - /cam/realmonitor
+    - /Streaming/Channels/101
+    - /Streaming/Channels/102
+    - /{channel}/1:1/main
+    - /play2.sdp
+    - /OVProfile00
+    - /stream2
+    - /medias{channel}
+    - /h264_stream
+    - /play1
+    - /onvif1
+    - /axis-media/media.amp
+    - /play3.sdp
+    - /cam/h264
+    - /11
+    - /VideoInput/0/h264/1
+    - /ch0_0.h265
+    - /high-res.sdp
+    - /HighResolutionVideo
+    - /0
+    - /live/h264/ch0
+    - /0/1:1/main
+    - /video.h264
+    - /1
+    - /cam0/h264
+    - /live1.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Trivision
+  banners: []
+  paths:
+    tcp:
+    - /live_mpeg4.sdp
+    - /live/0/onvif.sdp
+    - /live0.264
+    - /ch1/stream0
+    - /cam{channel}/h264
+    - /live
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Trust
+  banners: []
+  paths:
+    tcp:
+    - /profile1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /cam/realmonitor
+    - /Streaming/Channels/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Truvision
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /Streaming/Unicast/channels/401
+    - /Streaming/channels/301
+    - /Streaming/Channels/101
+    - /Streaming/channels/902
+    - /Streaming/channels/702
+    - /Streaming/Unicast/channels/202
+    - /Streaming/channels/901
+    - /11
+    - /videoMain
+    - /0
+    - /rtsph2641080p
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Turbo X
+  banners: []
+  paths:
+    tcp:
+    - /video.mp4
+    - /videoMain
+    - /live/ch00_0
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /Streaming/channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ubiquiti
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    - /ch0{channel}_0
+    - /s0
+    - /s1
+    - /s2
+    - /5e254c28900822014a06053a_0
+    - /ch00_0
+    - /DRELXB66JxT9T4XW
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ubnt
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    - /61875a64848eba80bb89a72d_0
+    - /61875a64848eba80bb89a72e_0
+    - /61875a64848eba80bb89a72c_1
+    - /61875a64848eba80bb89a72c_0
+    - /61875a64848eba80bb89a72e_1
+    - /61875a64848eba80bb89a72d_1
+    - /live/ch01_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ucam 247
+  banners: []
+  paths:
+    tcp:
+    - /live/0/onvif.sdp
+    - /live_mpeg4.sdp
+    - /cam1/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Udp Technology
+  banners: []
+  paths:
+    tcp:
+    - /ch0_unicast_firststream
+    - /ch0_unicast_secondstream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ul-tech
+  banners: []
+  paths:
+    tcp:
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Uniarch
+  banners: []
+  paths:
+    tcp:
+    - /cam1/mpeg4
+    - /unicast/c1/s0/live
+    - /
+    - /videoMain
+    - /rtsph2641080p
+    - /live/h264/HD1080P
+    - /media/video2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Uniden
+  banners: []
+  paths:
+    tcp:
+    - /ch01.264
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Unifi
+  banners: []
+  paths:
+    tcp:
+    - /s0
+    - /Y6LkiH8UDTSbjlyR
+    - /7k9wbmWV4capQOJn
+    - /ZOeooeCNUzrdEMBB
+    - /CfoWfNYSi2Uto1Va
+    - /s1
+    - /euwkG3hjFjvc4Hgv
+    - /FWIpiqzfEvvdCAAY
+    - /bGQUCKWG5my3BRIt
+    - /G3dyqVoAMRY4sIhg
+    - /s2
+    - /hQ0t5jE5wP4yYVzD
+    - /jkRzYFwDgmCnVTMB
+    - /87eIzaVpJHI5qkeU
+    - /4NifILe1B0uQyMcN?enablertsp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Unioncam
+  banners: []
+  paths:
+    tcp:
+    - /onvif1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Unique-cctv
+  banners: []
+  paths:
+    tcp:
+    - /media/video1
+    - /11
+    - /stream2
+    - /12
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Uniview
+  banners: []
+  paths:
+    tcp:
+    - /media/video1
+    - /videoMain
+    - /media/video2
+    - /media/video3
+    - /unicast/c1/s1/live
+    - /h264_stream
+    - /11
+    - /1
+    - /media/video0/
+    - /0
+    - /onvif1
+    - /unicast/c1/s0/live
+    - /mediavideo
+    - /video1
+    - /unicast/c2/s1/live
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Unv
+  banners: []
+  paths:
+    tcp:
+    - /MediaInput/mpeg4
+    - /media/video1
+    - /h264_stream
+    - /11
+    - /unicast/c1/s0/live
+    - /unicast/c2/s0/live
+    - /media/video2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Unview
+  banners: []
+  paths:
+    tcp:
+    - /media/video1
+    - /videoMain
+    - /cam1/mpeg4
+    - /unicast/c1/s1/live
+    - /0
+    - /media/video3
+    - /cam{channel}/h264
+    - /ch0_0.h264
+    - /1
+    - /11
+    - /media/video2
+    - /live/mpeg4
+    - /live
+    - /h264_stream
+    - /unicast/c9/s0/live
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Uokoo
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /live/ch1
+    - /tcp/av0_0
+    - /ROH/channel/11
+    - /ucast/11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Upcam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Urmet
+  banners: []
+  paths:
+    tcp:
+    - /v01
+    - /stremming1
+    - /VideoInput/{channel}/h264/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: V380
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live/ch00_0
+    - /h264_stream
+    - /1/cif
+    - /live/ch00_1
+    - /onvif1
+    - /cam{channel}/h264
+    - /1
+    - /Onvif/live/1/1
+    - /cam/realmonitor
+    - /live_mpeg4.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: V380pro
+  banners: []
+  paths:
+    tcp:
+    - /Onvif/live/1/1
+    - /cam/realmonitor
+    - /live/ch00_0
+    - /onvif1
+    - /11
+    - /live/ch00_1
+    - /video.h264
+    - /live_mpeg4.sdp
+    - /h264_stream
+    - /ch0_0.h264
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vacron
+  banners: []
+  paths:
+    tcp:
+    - /video0.sdp
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vantech
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /11
+    - /cam1/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vatilon
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /11
+    - /LowResolutionVideo
+    - /1
+    - /cam/realmonitor
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vcatch
+  banners: []
+  paths:
+    tcp:
+    - /mpeg4cif
+    - /mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Verizon
+  banners: []
+  paths:
+    tcp:
+    - /live/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vicon Security
+  banners: []
+  paths:
+    tcp:
+    - /1/stream1/Profile1
+    - /live/second
+    - /live/main
+    - /1/stream1
+    - /live3.sdp
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Victure
+  banners: []
+  paths:
+    tcp:
+    - /h264
+    - /cam0/h264
+    - /11
+    - /live/ch00_0
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /ch0_0.h264
+    - /cam1/mpeg4
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /tcp/av0_0
+    - /cam/realmonitor?channel=0&subtype=1
+    - /cam/realmonitor?channel=0&subtype=00
+    - /cam/realmonit
+    - /h264_2
+    - /cam/realmonitor?channel=1&subtype=1
+    - /cam{channel}/h264
+    - /cam/realmonitor?channel=1&subtype=00
+    - /cam/realmonitor?channel=1&subtype=00&authbasic=Z3VycmllcmlyZ0BnbWFpbC5jb206MzAwNTc4cmc=
+    - /video.mp4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vikylin
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel=0&subtype=1
+    - /1/h264major
+    - /Streaming/Channels/101
+    - /stream1?username=admin&password=E10ADC3949BA59ABBE56E057F20F883E
+    - /stream0?username=admin&password=E10ADC3949BA59ABBE56E057F20F883E
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vimicro
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vista Cctv
+  banners: []
+  paths:
+    tcp:
+    - /1/stream1
+    - /cam1/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Visualint
+  banners: []
+  paths:
+    tcp:
+    - /VideoInput/{channel}/h264/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vitek Cctv
+  banners: []
+  paths:
+    tcp:
+    - /profile1
+    - /cam1/mpeg4
+    - /ch{channel}.sdp
+    - /cam0_0
+    - /Streaming/Channels/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vivint
+  banners: []
+  paths:
+    tcp:
+    - /live3.sdp
+    - /live.sdp
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vivotek
+  banners: []
+  paths:
+    tcp:
+    - /live.sdp
+    - /live2.sdp
+    - /live4.sdp
+    - /live3.sdp
+    - /root/stream0
+    - /video.mp4
+    - /live1.sdp
+    - /live/ch00_0
+    - /live1s1.sdp
+    - /11
+    - /live1s2.sdp
+    - /img/video.sav
+    - /live1s3.sdp
+    - //stream0
+    - /stream2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vonnic
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /11
+    - /h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vr Cam
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.264
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Vstarcam
+  banners: []
+  paths:
+    tcp:
+    - /tcp/av0_0
+    - /tcp/av0_1
+    - /11
+    - /12
+    - /H264
+    - /cam1/mpeg4
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /onvif1
+    udp:
+    - /udp/av0_1
+    - /udp/av0_0
+  creds:
+    usernames: []
+    passwords: []
+- name: Walkertone
+  banners: []
+  paths:
+    tcp:
+    - /0/888888:888888/main
+    - /0/888888:888888/sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wanscam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0_0.h264
+    - /1
+    - /live/ch0
+    - /12
+    - /ucast/11
+    - /cam/realmonitor
+    - /play1.sdp
+    - /play2.sdp
+    - /live/h264/ch{channel}
+    - /mpeg4
+    - /tcp/av0_0
+    - /onvif1
+    - /cam1/onvif-h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wansview
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /live/ch1
+    - /live/ch2
+    - /12
+    - /11
+    - /ucast/11
+    - /live/ch00_0
+    - /h264Preview_01_main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Watashi
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /ipcam.sdp
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Watch Bot Camera
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Watchnet Inc
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wbox
+  banners: []
+  paths:
+    tcp:
+    - /Streaming/Channels/2
+    - /Streaming/Channels/1
+    - /1
+    - /11
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Westcam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /PSIA/Streaming/channels/h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Westmile
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wgcc
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264
+    - /11
+    - /video.h264
+    - /h264_stream
+    - /live/mpeg4
+    - /Streaming/Channels/1
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wifi Smart Net Camera
+  banners: []
+  paths:
+    tcp:
+    - /live/ch00_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Winbook
+  banners: []
+  paths:
+    tcp:
+    - /live1.264
+    - /live0.264
+    - /h264_stream
+    - /OVProfile02
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Winic
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wise Group
+  banners: []
+  paths:
+    tcp:
+    - /ch1_s1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wisenet
+  banners: []
+  paths:
+    tcp:
+    - /profile3/media.smp
+    - /profile2/media.smp
+    - /onvif/profile2/media.smp
+    - /onvif/profile1/media.smp
+    - /HighResolutionVideo
+    - /axis-media/media.amp
+    - /0/onvif/profile2/media.smp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wiwacam
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wodsee
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.264
+    - /mpeg4
+    - /ch0_1.264
+    - /av0_0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Wyzecam
+  banners: []
+  paths:
+    tcp:
+    - /live
+    - /mia_cam
+    - /unicast
+    - /video3/unicast
+    - /11
+    - /wyze-1
+    - /wyze-2
+    - /living-room-cam
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: X-price
+  banners: []
+  paths:
+    tcp:
+    - /ch01.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: X10
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xanboo
+  banners: []
+  paths:
+    tcp:
+    - /img/video.sav
+    - /img/media.sav
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xgody
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xiaomi
+  banners: []
+  paths:
+    tcp:
+    - /ch0.h264
+    - /ch0_0.h264
+    - /live/ch00_0
+    - /unicast
+    - /mainstream
+    - /11
+    - /substream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xiaovv
+  banners: []
+  paths:
+    tcp:
+    - /ch0.h264
+    - /Onvif/live/1/1
+    - /live/main
+    - /live/ch00_1
+    - /11
+    - /live/ch00_0
+    - /H264/ch1/main/av_stream
+    - /H264/ch1/sub/av_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xiongmai Dvr
+  banners: []
+  paths:
+    tcp:
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xipcam
+  banners: []
+  paths:
+    tcp:
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xmeye
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    - /cam/realmonitor
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xseries
+  banners: []
+  paths:
+    tcp:
+    - /live/ch0
+    - /live/ch1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xts Corp
+  banners: []
+  paths:
+    tcp:
+    - /rtpvideo1.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xvim
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ONVIF/channel2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xvision
+  banners: []
+  paths:
+    tcp:
+    - /cam1/onvif-h264-1
+    - /ch01.264
+    - /cam/realmonitor
+    - /mpeg4/media.amp?resolution=640x480
+    - /live/h264
+    - /ch0_0.h264
+    - /ch00/0
+    - /ch00/1
+    - /
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Xxcamera
+  banners: []
+  paths:
+    tcp:
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Y-cam
+  banners: []
+  paths:
+    tcp:
+    - /live/0/h264.sdp
+    - /live_mpeg4.sdp
+    - /live_h264_1.sdp
+    - /live/0/onvif.sdp
+    - /v01
+    - /v02
+    - /v03
+    - /live_h264.sdp
+    - /live_mpeg4_1.sdp
+    - /live/0/mpeg4.sdp
+    - /ch0_0.h264
+    - /video.h264
+    - /Streaming/Channels/1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ycc
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /h264_stream
+    - /H264/sub
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ycc365
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /
+    - /cam1/mpeg4
+    - /0/av0
+    - /0
+    - /0/av1
+    - /live
+    - /onvif2
+    - /H264/sub
+    - /live_mpeg4.sdp
+    - /onvif/device_service
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Ycc365 Plus
+  banners: []
+  paths:
+    tcp:
+    - /0/av0
+    - /H264/sub
+    - /Streaming/Channels/101
+    - /MediaInput/mpeg4
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yccplus
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /videoMain
+    - /cam/realmonitor
+    - /live_mpeg4.sdp
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yi
+  banners: []
+  paths:
+    tcp:
+    - /ch0_0.h264
+    - /ch0.h264
+    - /ch0_1.h264
+    - /live/ch00_0
+    - /ch1.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yicam
+  banners: []
+  paths:
+    tcp:
+    - /ch0_1.h264
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yoko Tech
+  banners: []
+  paths:
+    tcp:
+    - /cam{channel}/h264
+    - /3gpp
+    - /h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yoluke
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yoosee
+  banners: []
+  paths:
+    tcp:
+    - /onvif2
+    - /onvif1
+    - /11
+    - /0
+    - /1
+    - /live.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yotex
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yucheng
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live/0/MAIN
+    - /h264_stream
+    - /1/h264major
+    - /0
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yudor
+  banners: []
+  paths:
+    tcp:
+    - /
+    - /v2
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Yunch
+  banners: []
+  paths:
+    tcp:
+    - /cam2/mpeg4
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zavio
+  banners: []
+  paths:
+    tcp:
+    - /video.mp4
+    - /video.pro2
+    - /video.pro1
+    - /video.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zenith Cctv
+  banners: []
+  paths:
+    tcp:
+    - /H264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zetronix
+  banners: []
+  paths:
+    tcp:
+    - /rtsp_live1
+    - /1
+    - /LowResolutionVideo
+    - /live/main
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zeustech
+  banners: []
+  paths:
+    tcp:
+    - /11
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zicom
+  banners: []
+  paths:
+    tcp:
+    - /CH00{channel}.sdp
+    - /LowResolutionVideo
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zilink
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /cam/realmonitor?channel={channel}&subtype=01
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zintronic
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0_0.h264
+    - /1
+    - /0
+    - /h264_stream
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zkteco
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor
+    - /0
+    - /Streaming/Channels/1
+    - /11
+    - /mpeg4/media.amp?resolution=640x480
+    - /live_mpeg4.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zmodo
+  banners: []
+  paths:
+    tcp:
+    - /VideoInput/{channel}/h264/1
+    - /{channel}
+    - /tcp/av0_0
+    - /cam{channel}/mpeg4
+    - /tcp/av0_1
+    - /000100
+    - /streaming/mjpeg
+    - /cam{channel}/h264
+    - /live.sdp
+    - /image.mpg
+    - /mpeg4/{channel}/media.amp
+    - /h264
+    - /cam{channel}/mjpeg
+    - /mpg4/rtsp.amp
+    - /mpeg4
+    - /video.mp4
+    - /{channel}/1:1/main
+    - /onvif1
+    - /0/Duane:tittus/main
+    - /11
+    - //tcp/av0_0
+    udp:
+    - /udp/av0_0
+    - /udp/av0_1
+  creds:
+    usernames: []
+    passwords: []
+- name: Znv
+  banners: []
+  paths:
+    tcp:
+    - /H264
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zonet
+  banners: []
+  paths:
+    tcp:
+    - /LowResolutionVideo
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zoneway
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /live/ch0
+    - /live0.264
+    - /ch0_0.h264
+    - /cam1/onvif-h264
+    - /tcp/av0_0
+    - /cam/realmonitor?channel={channel}&subtype=1
+    - /cam/realmonitor?channel={channel}&subtype=00
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zonx
+  banners: []
+  paths:
+    tcp:
+    - /h264_stream
+    - /ch01_sub.264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zosi
+  banners: []
+  paths:
+    tcp:
+    - /11
+    - /ch0_0.264
+    - /ucast/11
+    - /ch0_1.264
+    - /video1
+    - /ucast/12
+    - /video8-x264
+    - /video8
+    - /video2
+    - /onvif1
+    - /video7
+    - /12
+    - /Video1-x264
+    - /Video1
+    - /video7-x264
+    - /video7-x265
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zte
+  banners: []
+  paths:
+    tcp:
+    - /cam/realmonitor?channel={channel}&subtype=00
+    - /ch0_0.h264
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zxtech
+  banners: []
+  paths:
+    tcp:
+    - /0
+    - /11
+    - /
+    - /cam1/mpeg4
+    - /1
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: Zyxel
+  banners: []
+  paths:
+    tcp:
+    - /medias2
+    - /live3.sdp
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
