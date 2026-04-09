@@ -64,6 +64,7 @@ ports:
 - 65152
 common_paths:
 - /
+- /11
 - /live
 - /live.sdp
 - /h264_stream
