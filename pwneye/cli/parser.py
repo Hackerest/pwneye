@@ -60,7 +60,7 @@ def parse_args(logger) -> argparse.Namespace:
         "Target Selection (required)",
         "Choose either a single target or ONVIF discovery on the local network",
     )
-    targeting_mode = targeting.add_mutually_exclusive_group(required=True)
+    targeting_mode = targeting.add_mutually_exclusive_group(required=False)
     targeting_mode.add_argument(
         "-t", "--target",
         type=argparse_type(
@@ -156,6 +156,11 @@ def parse_args(logger) -> argparse.Namespace:
         help="Specify the vendor manually (e.g. hikvision)",
     )
     rtsp.add_argument(
+        "--banner",
+        action="store_true",
+        help="Fetch the RTSP banner and exit",
+    )
+    rtsp.add_argument(
         "--record",
         nargs="?",
         const="",
@@ -189,5 +194,15 @@ def parse_args(logger) -> argparse.Namespace:
         metavar="N",
         help="Number of concurrent threads",
     )
+    misc.add_argument(
+        "-lv", "--list-vendors",
+        action="store_true",
+        help="List supported RTSP vendors and exit",
+    )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if not (args.target or args.discover or args.list_vendors):
+        parser.error("one of --target or --discover is required")
+
+    return args

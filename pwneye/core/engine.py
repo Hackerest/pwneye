@@ -26,6 +26,9 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
     if not init.ok:
         return init.exit_code
 
+    if args.list_vendors:
+        return _list_supported_rtsp_vendors(tui)
+
     if args.discover:
         return _run_onvif_discovery(args, tui)
         
@@ -57,6 +60,23 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
 
     # RTSP Testing
     if not args.skip_rtsp:
+        rtsp_kb = rtspdata.load_knowledge_base()
+
+        if args.banner:
+            rtsp_ports = _resolve_rtsp_ports(
+                host=args.target,
+                rtsp_kb=rtsp_kb,
+                tui=tui,
+                preferred_port=args.rtsp_port,
+                onvif_streams=onvif_rtsp_streams,
+            )
+            return _print_rtsp_banner(
+                args=args,
+                cache_entry=cache_entry,
+                rtsp_ports=rtsp_ports,
+                tui=tui,
+            )
+
         cached_rtsp_ok = _try_cached_rtsp_auth(
             args=args,
             cache_entry=cache_entry,
@@ -65,8 +85,6 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
         )
         if cached_rtsp_ok:
             return ExitCode.SUCCESS
-
-        rtsp_kb = rtspdata.load_knowledge_base()
 
         rtsp_ports = _resolve_rtsp_ports(
             host=args.target,
@@ -138,8 +156,8 @@ def _prioritize_rtsp_ports(ports: list[int]) -> list[int]:
         554,
         8554,
         5544,
-        10554,
         8555,
+        10554,
         5554,
         1554,
         7070,
@@ -223,7 +241,9 @@ def _initialize_environment(args: argparse.Namespace, tui: TUI) -> Result:
     if dependencies:
         ok, missing = bootstrap.check_dependencies(dependencies)
         if not ok:
-            tui.error(f"Missing required dependencies. Please install: {', '.join(missing)}")
+            package_hint = " (Package: ffmpeg)" if any(dep in {"ffplay", "ffprobe", "ffmpeg"} for dep in missing) else ""
+            missing_list = ", ".join(missing)
+            tui.error(f"Missing required dependencies. Please install: {missing_list}{package_hint}")
             return Result(ok=False, exit_code=ExitCode.FAILURE)
 
     # --- Knowledge bases sanity check ---
@@ -249,16 +269,39 @@ def _initialize_environment(args: argparse.Namespace, tui: TUI) -> Result:
 
     # --- CLI variables checks ---
 
+    if args.list_vendors:
+        return Result(ok=True, exit_code=ExitCode.SUCCESS)
+
     if not args.skip_rtsp and args.vendor:
         if not rtspdata.is_vendor_in_db(args.vendor, rtsp_kb):
-            tui.warning("Invalid RTSP vendor specified: {vendor} "
-                        "(valid vendors: {valid_vendors})",
-                        vendor=args.vendor,
-                        valid_vendors=", ".join(rtspdata.get_all_vendors(rtsp_kb)))
-            tui.warning("Falling back to automatic RTSP vendor identification")
+            tui.warning(
+                "The specified RTSP vendor was not found in the knowledge base: {vendor}",
+                vendor=args.vendor,
+            )
+            tui.info("Use --list-vendors to show the supported RTSP vendors")
             args.vendor = None
 
     return Result(ok=True, exit_code=ExitCode.SUCCESS)
+
+def _list_supported_rtsp_vendors(tui: TUI) -> ExitCode:
+    """
+    Print the supported RTSP vendors and exit.
+    """
+    try:
+        rtsp_kb = rtspdata.load_knowledge_base()
+    except Exception:
+        tui.error("Unable to load the RTSP knowledge base")
+        return ExitCode.FAILURE
+
+    vendors = rtspdata.get_all_vendors(rtsp_kb)
+    if not vendors:
+        tui.warning("No RTSP vendors are currently available in the knowledge base")
+        return ExitCode.FAILURE
+
+    tui.success("Loaded {count} RTSP vendor(s) from the knowledge base", count=len(vendors))
+    tui.block(vendors)
+    return ExitCode.SUCCESS
+
 
 def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
     """
@@ -1082,6 +1125,44 @@ def _resolve_rtsp_ports(
 
     return valid_ports
 
+def _print_rtsp_banner(
+    args: argparse.Namespace,
+    cache_entry: dict | None,
+    rtsp_ports: list[int],
+    tui: TUI,
+) -> ExitCode:
+    """
+    Print the RTSP banner for the target and exit.
+    """
+    cached_banner = cachedata.get_cached_rtsp_banner(cache_entry)
+    if cached_banner is not None:
+        tui.success(
+            "Using previously cached RTSP banner on port {port}: {banner}",
+            port=cached_banner["port"],
+            banner=cached_banner["value"],
+        )
+        return ExitCode.SUCCESS
+
+    for port in rtsp_ports:
+        banner = rtsp.detect_banner(args.target, port)
+        if not banner:
+            continue
+
+        if not args.no_cache:
+            cachedata.upsert_rtsp_banner(args.target, port=port, banner=banner)
+            tui.info2("Saved RTSP banner to cache")
+
+        tui.success(
+            "RTSP banner on port {port}: {banner}",
+            port=port,
+            banner=banner,
+        )
+        return ExitCode.SUCCESS
+
+    tui.warning("Unable to retrieve an RTSP banner from the discovered RTSP port(s)")
+    return ExitCode.FAILURE
+
+
 def _resolve_rtsp_targets(
     args: argparse.Namespace,
     rtsp_kb: dict,
@@ -1177,6 +1258,7 @@ def _detect_rtsp_vendor(
     ports: list[int],
     rtsp_kb: dict,
     tui: TUI,
+    no_cache: bool = False,
 ) -> str | None:
     """
     Attempt to identify the RTSP vendor using the Server banner.
@@ -1186,6 +1268,8 @@ def _detect_rtsp_vendor(
         if not banner:
             continue
 
+        if not no_cache:
+            cachedata.upsert_rtsp_banner(host, port=port, banner=banner)
         tui.info("RTSP banner on port {port}: {banner}", port=port, banner=banner)
 
         vendor = rtspdata.identify_vendor_from_banner(banner, rtsp_kb)
@@ -1499,7 +1583,7 @@ def _run_rtsp_scan(
     elif cached_manufacturer:
         tui.info2("RTSP vendor loaded from cache: {vendor}", vendor=vendor)
     else:
-        vendor = _detect_rtsp_vendor(args.target, rtsp_ports, rtsp_kb, tui)
+        vendor = _detect_rtsp_vendor(args.target, rtsp_ports, rtsp_kb, tui, no_cache=args.no_cache)
 
     fixed_rtsp_credentials = bool(args.username and args.password)
     if fixed_rtsp_credentials:
@@ -1690,10 +1774,9 @@ def _confirm_exhaustive_rtsp_scan(
         tui.warning("The vendor-specific RTSP paths did not produce a working stream")
     else:
         tui.warning("Unable to identify the RTSP vendor via banner")
-
-    tui.warning(
-        "Specifying the RTSP vendor would reduce the number of requests significantly"
-    )
+        tui.warning(
+            "Specifying the RTSP vendor would reduce the number of requests significantly"
+        )
 
     return tui.confirm(
         f"Try an exhaustive RTSP path scan with {attempts} combination(s) across "

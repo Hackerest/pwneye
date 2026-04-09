@@ -17,6 +17,9 @@ usernames:
   - user
   - camera
   - service
+  - default
+  - 888888
+  - 666666
 
 passwords:
   - ""
@@ -27,3 +30,6 @@ passwords:
   - root
   - user
   - 0000
+  - default
+  - 888888
+  - 666666

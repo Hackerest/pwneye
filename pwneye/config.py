@@ -5,7 +5,7 @@ from pathlib import Path
 # ------------------------------------------
 
 DEVELOPER = "robo7nik"
-VERSION = "1.0"
+VERSION = "1.0.0"
 CODENAME = "panopticon"
 REPO = "https://github.com/hackerest/pwneye"
 

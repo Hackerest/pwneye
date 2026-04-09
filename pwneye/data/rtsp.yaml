@@ -75,12 +75,81 @@ common_creds:
   - admin
   - root
   - user
+  - default
+  - '888888'
+  - '666666'
+  - Admin
+  - admin1
+  - administrator
+  - Administrator
+  - aiphone
+  - Dinion
+  - none
+  - Root
+  - service
+  - supervisor
+  - ubnt
   passwords:
   - ''
   - admin
   - '12345'
   - '123456'
   - password
+  - default
+  - '888888'
+  - '666666'
+  - '0000'
+  - '00000'
+  - '1111'
+  - '111111'
+  - '1111111'
+  - '123'
+  - '1234'
+  - '1234567'
+  - '12345678'
+  - '123456789'
+  - '12345678910'
+  - '4321'
+  - '6fJjMKYx'
+  - '9999'
+  - admin123456
+  - 'admin pass'
+  - Admin
+  - admin123
+  - administrator
+  - Administrator
+  - aiphone
+  - camera
+  - Camera
+  - fliradmin
+  - GRwvcj8j
+  - hikvision
+  - hikadmin
+  - HuaWei123
+  - ikwd
+  - jvc
+  - kj3TqCWv
+  - meinsm
+  - pass
+  - Pass
+  - password123
+  - qwerty
+  - qwerty123
+  - Recorder
+  - reolink
+  - root
+  - service
+  - supervisor
+  - support
+  - system
+  - tlJwpbo6
+  - toor
+  - 'tp-link'
+  - ubnt
+  - user
+  - wbox
+  - wbox123
+  - Y5eIMz3C
 vendors:
 - name: 255 Ip Cam
   banners: []
@@ -2292,7 +2361,9 @@ vendors:
     usernames: []
     passwords: []
 - name: H.264
-  banners: []
+  banners:
+  - H264DVR
+  paths:
   paths:
     tcp:
     - /live/ch00_0
@@ -5772,6 +5843,17 @@ vendors:
     - /live/ch00_0
     - /cam/realmonitor?channel={channel}&subtype=1
     - /Streaming/channels/101
+    udp: []
+  creds:
+    usernames: []
+    passwords: []
+- name: TVT
+  banners:
+  - TVT RTSP Server
+  paths:
+    tcp:
+    - /?chID={channel}&streamType=main&linkType=tcp
+    - /chID={channel}&streamType=main&linkType=tcpst
     udp: []
   creds:
     usernames: []

@@ -63,21 +63,51 @@ def load_knowledge_base(
         "vendors": normalized_vendors,
     }
 
+def _normalize_vendor_name(value: str) -> str:
+    """
+    Normalize vendor names for loose matching.
+    """
+    return "".join(ch for ch in value.lower() if ch.isalnum())
+
+
+def find_vendor_matches(vendor: str | None, kb: RtspKnowledgeBase) -> list[dict]:
+    """
+    Return knowledge base entries matching the given vendor name.
+    """
+    if not vendor:
+        return []
+
+    vendor_lower = vendor.lower().strip()
+    vendor_normalized = _normalize_vendor_name(vendor)
+
+    exact_matches = []
+    normalized_matches = []
+
+    for entry in kb.get("vendors", []):
+        name = entry.get("name") or ""
+        if not name:
+            continue
+
+        name_lower = name.lower()
+        if name_lower == vendor_lower:
+            exact_matches.append(entry)
+            continue
+
+        if _normalize_vendor_name(name) == vendor_normalized:
+            normalized_matches.append(entry)
+
+    return exact_matches or normalized_matches
+
+
 def find_vendor_entry(vendor: str | None, kb: RtspKnowledgeBase) -> dict | None:
     """
     Return the RTSP knowledge base entry matching the given vendor name.
     """
-    if not vendor:
+    matches = find_vendor_matches(vendor, kb)
+    if not matches:
         return None
 
-    vendor = vendor.lower()
-
-    for entry in kb.get("vendors", []):
-        name = entry.get("name")
-        if name and name.lower() == vendor:
-            return entry
-
-    return None
+    return matches[0]
 
 def identify_vendor_from_banner(
     banner: str | None,

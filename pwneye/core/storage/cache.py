@@ -1,4 +1,4 @@
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from pathlib import Path
 import re
 import yaml
@@ -10,7 +10,7 @@ def _utc_now() -> str:
     """
     Return the current UTC time in ISO 8601 format.
     """
-    return datetime.now(UTC).replace(microsecond=0).isoformat()
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 def _cache_path(host: str) -> Path:
@@ -135,6 +135,27 @@ def upsert_onvif_discovery(
     save_target(host, data)
 
 
+def upsert_rtsp_banner(
+    host: str,
+    *,
+    port: int,
+    banner: str,
+) -> None:
+    """
+    Persist an RTSP banner for the target.
+    """
+    if not banner:
+        return
+
+    data = load_target(host) or _empty_document(host)
+    rtsp = data.setdefault("rtsp", {})
+    rtsp["banner"] = {
+        "port": port,
+        "value": banner,
+    }
+    save_target(host, data)
+
+
 def upsert_rtsp_success(
     host: str,
     *,
@@ -205,6 +226,26 @@ def get_cached_onvif_manufacturer(data: dict | None) -> str | None:
         return None
 
     return str(manufacturer)
+
+
+def get_cached_rtsp_banner(data: dict | None) -> dict | None:
+    """
+    Return a cached RTSP banner, if available.
+    """
+    if not data:
+        return None
+
+    rtsp = data.get("rtsp") or {}
+    banner = rtsp.get("banner") or {}
+    port = banner.get("port")
+    value = banner.get("value")
+    if port is None or not value:
+        return None
+
+    return {
+        "port": port,
+        "value": str(value),
+    }
 
 
 def get_cached_rtsp_auth(data: dict | None) -> dict | None:
