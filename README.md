@@ -305,5 +305,5 @@ This tool can enumerate services, test authentication, open streams, record vide
 
 ## License
 
-This project is distributed under the MIT License.
+This project is distributed under the GNU GPL3 License.
 See `LICENSE.md`.
