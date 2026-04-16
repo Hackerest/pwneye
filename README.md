@@ -54,6 +54,7 @@ cd pwneye
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python3 pwneye.py --help
 ```
 
 ### External Dependencies
@@ -73,68 +74,67 @@ The following tools are expected in `PATH` depending on the mode you use:
 
 ## Getting Started
 
-A simple way to approach `pwneye` is:
+`pwneye` can be used in different ways depending on what you already know about the target. The examples below are meant to show the fastest way to get value out of the tool, not a single mandatory workflow.
 
-1. enumerate the local network when you are on the same segment
-2. scan a single target with the default ONVIF + RTSP flow
-3. narrow RTSP requests with `--vendor` when you already know the device family
-4. switch to wordlists only when fixed credentials are not enough
-
-Local network discovery:
+Run the default ONVIF + RTSP flow against a single target:
 
 ```bash
-python3 pwneye.py --discover
+pwneye -t 192.168.1.135
 ```
 
-Default single-target workflow:
+Discover ONVIF-capable devices on the local network:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135
+pwneye --discover
 ```
 
-List the RTSP vendors available in the knowledge base:
+Use fixed RTSP credentials or wordlists:
 
 ```bash
-python3 pwneye.py --list-vendors
+pwneye -t 192.168.1.135 --username admin --password admin
+pwneye -t 192.168.1.135 --username admin --password ~/wordlists/passwords.txt
+pwneye -t 192.168.1.135 --username ~/wordlists/users.txt --password admin123
 ```
 
-If you already know the RTSP vendor, use it early to reduce the number of requests:
-
-```bash
-python3 pwneye.py -t 192.168.1.135 --vendor tenda
-```
-
-Credential flags accept either:
-- a literal value
-- a file with one value per line
-
-Examples:
-
-```bash
-python3 pwneye.py -t 192.168.1.135 --username admin --password ~/wordlists/passwords.txt
-python3 pwneye.py -t 192.168.1.135 --username ~/wordlists/users.txt --password admin123
-python3 pwneye.py -t 192.168.1.135 -ou admin -op ~/wordlists/onvif.txt --skip-rtsp
-```
-
-Behavior summary:
-- fixed `username + password`: only that exact pair is tested
-- fixed `username` only: usernames stay fixed, passwords rotate
-- fixed `password` only: passwords stay fixed, usernames rotate
-- files on both sides: full cartesian product is tested
-
-Global options worth knowing early:
-- `--threads N`: number of concurrent threads
+Useful flags to keep in mind from the start:
+- `--vendor VENDOR`: reduce RTSP requests when the device family is already known
+- `--threads N`: control concurrency for ONVIF and RTSP bruteforce
+- `--skip-onvif` / `--skip-rtsp`: focus on one protocol only
 - `--no-cache`: do not read from or write to cache
 - `--fresh`: ignore cache reads but still write new findings
 
 ## ONVIF
+
+ONVIF is the management and control side of the camera world. In practice, it is useful for discovery, authentication, metadata extraction, media profile enumeration, stream URI retrieval, and device actions such as rebooting.
+
+In `pwneye`, ONVIF is the protocol that usually gives the richest post-auth context and the cleanest path to understanding what a camera exposes.
 
 ### Enumerating the Local Network
 
 Use WS-Discovery to identify ONVIF-capable devices on the local network:
 
 ```bash
-python3 pwneye.py --discover
+pwneye --discover
+
+[info] Starting continuous ONVIF discovery on the local network
+[info] Press CTRL-C to stop the probing
+[success] Discovered 1 new ONVIF device(s) on the local network
+[info] Saved ONVIF discovery data to cache for 192.168.1.135 (Tenda)
+
+   Host: 192.168.1.135
+   Port: 80
+   Protocol: http
+   Types: Device
+   XAddrs: http://192.168.1.135:80/onvif/device_service
+   Manufacturer: Tenda
+   Name: CP3Pro
+   Hardware: CP3Pro
+   MAC: XX:XX:XX:XX:XX:XX
+   Country: China
+   Profiles: Streaming
+   Capabilities: NetworkVideoTransmitter, ptz, video_encoder, audio_encoder
+
+[success] ONVIF discovery stopped by user after identifying 1 device(s)
 ```
 
 The discovery loop keeps probing every few seconds, prints only newly discovered devices, and can be stopped with `CTRL-C`.
@@ -144,7 +144,19 @@ The discovery loop keeps probing every few seconds, prints only newly discovered
 Run ONVIF-only bruteforce with a fixed username and a password file:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 -ou admin -op ~/wordlists/rockyou-short.txt --skip-rtsp --threads 5
+pwneye -t 192.168.1.135 -ou admin -op ~/wordlists/rockyou-short.txt --skip-rtsp --threads 5
+
+[info] Checking if the target (192.168.1.135) is reachable...
+[info] The target seems to be reachable
+[info] Trying ONVIF authentication using user-provided credentials...
+[success] 192.168.1.135 supports ONVIF on port 80
+[warning] Unable to authenticate via ONVIF using provided credentials
+[>] Do you want to extend the test to common ONVIF credentials? [(y)es/(n)o] (default: y): 
+[info] No explicit ONVIF credentials specified, trying common ONVIF credentials...
+[info] Trying ONVIF authentication using common username(s) and password(s)...
+[success] 192.168.1.135 supports ONVIF on port 80
+⠼ Trying ONVIF on 192.168.1.135:80 with camera:12345
+
 ```
 
 Useful options:
@@ -160,27 +172,50 @@ Useful options:
 If ONVIF authentication succeeds, you can request a reboot directly:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --reboot
+pwneye -t 192.168.1.135 --reboot
+
+[info] Found cached ONVIF/RTSP credential(s) for 192.168.1.135
+[info] Checking if the target (192.168.1.135) is reachable...
+[info] The target seems to be reachable
+[info] Trying cached ONVIF credentials for the target...
+[success] 192.168.1.135 supports ONVIF on port 80
+[success] ONVIF connection established using the following configuration:
+
+   Port: 80
+   ONVIF Username: admin
+   ONVIF Password: Hackerest1
+
+[info] Using previously cached ONVIF credentials
+[warning] Requesting ONVIF system reboot...
+[success] ONVIF reboot request accepted. The camera is rebooting.
 ```
 
 When `--reboot` is used, RTSP probing is skipped.
 
 ## RTSP
 
+RTSP is the streaming side of the camera world. It is the protocol that usually gives you the live video path, but it is also the most fragmented one: vendors use different paths, channel conventions, authentication quirks, and banner formats.
+
+In `pwneye`, RTSP handling is built around port discovery, banner grabbing, vendor-aware path selection, bruteforce orchestration, stream validation, preview, and recording.
+
 ### Identifying the Vendor
 
 `pwneye` will try to identify the RTSP vendor automatically through RTSP banner grabbing before falling back to broader path enumeration.
 
-If you already identified the vendor during a preliminary analysis, you can pass it directly to reduce the number of requests significantly:
+If automatic banner-based identification fails and you already know the vendor from prior analysis, you can pass it directly to reduce the number of requests significantly:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --vendor tenda
+pwneye -t 192.168.1.135 --vendor tenda
 ```
 
 You can also fetch only the RTSP banner and exit:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --skip-onvif --banner
+pwneye -t 192.168.1.135 --skip-onvif --banner
+
+...
+[info] RTSP service detected on port(s): 554
+[success] RTSP banner on port 554: Hipcam RealServer/V1.0
 ```
 
 Useful options:
@@ -196,13 +231,13 @@ Useful options:
 Bruteforce RTSP with fixed credentials:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --username admin --password admin
+pwneye -t 192.168.1.135 --username admin --password admin
 ```
 
 Rotate only usernames with a fixed password:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --password 'SuperSecretPass' --vendor hikvision --threads 10
+pwneye -t 192.168.1.135 --password 'SuperSecretPass' --vendor hikvision --threads 10
 ```
 
 Useful options:
@@ -222,20 +257,26 @@ Cache behavior:
 Open a validated stream with live preview:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --vendor tenda
+pwneye -t 192.168.1.135 --vendor tenda
 ```
 
 Record a validated RTSP stream with preview:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --record
-python3 pwneye.py -t 192.168.1.135 --record living-room.mp4
+pwneye -t 192.168.1.135 --record
+pwneye -t 192.168.1.135 --record living-room.mp4
 ```
 
 Record without opening the preview window:
 
 ```bash
-python3 pwneye.py -t 192.168.1.135 --record living-room.mp4 --no-video
+pwneye -t 192.168.1.135 --record living-room.mp4 --no-video
+
+...
+[info] Recording RTSP stream to /Users/user/.pwneye/recordings/recording_2026-04-14_20-25-03.mp4
+[info] Press CTRL-C to stop the recording
+[warning] Retrying MP4 finalization in compatibility mode (transcoding)...
+[success] Recording saved to /Users/user/.pwneye/recordings/recording_2026-04-14_20-25-03.mp4 (5.75 MB)
 ```
 
 Recording behavior:

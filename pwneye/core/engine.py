@@ -1171,6 +1171,7 @@ def _resolve_rtsp_targets(
     rtsp_streams: list[str] | None = None,
     onvif_credentials: tuple[str, str] | None = None,
     vendor_override: str | None = None,
+    use_exhaustive_paths: bool = False,
 ):
     """
     Resolve RTSP ports, credentials and paths to test based on context.
@@ -1241,9 +1242,11 @@ def _resolve_rtsp_targets(
         paths.extend(rtsp.parse_rtsp_url(url)["path"] for url in rtsp_streams)
     if vendor_entry:
         paths.extend(vendor_entry.get("paths", {}).get(args.protocol, []))
-    else:
+    elif use_exhaustive_paths:
         exhaustive_paths = True
         paths.extend(rtspdata.get_all_paths(rtsp_kb, args.protocol))
+    else:
+        paths.extend(rtsp_kb["common_paths"])
 
     return (
         ports,
@@ -1588,15 +1591,15 @@ def _run_rtsp_scan(
     fixed_rtsp_credentials = bool(args.username and args.password)
     if fixed_rtsp_credentials:
         tui.info(
-            "Trying only the user-provided RTSP credentials across the discovered ports and paths..."
+            "Loading user-provided RTSP username(s) and password(s)..."
         )
     elif args.username:
         tui.info(
-            "Trying RTSP combinations with the user-provided username fixed..."
+            "Loading user-provided RTSP username(s)..."
         )
     elif args.password:
         tui.info(
-            "Trying RTSP combinations with the user-provided password fixed..."
+            "Loading user-provided RTSP password(s)..."
         )
 
     ports, usernames, passwords, paths, exhaustive_paths = _resolve_rtsp_targets(
@@ -1639,8 +1642,13 @@ def _run_rtsp_scan(
             tui.info("Skipping exhaustive RTSP path scan at user request")
             return False
 
+    message = (
+        "Trying {attempts} RTSP combination(s) using generic path(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)..."
+        if vendor is None and not exhaustive_paths
+        else "Trying {attempts} RTSP combination(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)..."
+    )
     tui.info(
-        "Trying {attempts} RTSP combination(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)...",
+        message,
         attempts=len(attempts),
         ports=len(ports),
         paths=len(paths),
@@ -1665,6 +1673,7 @@ def _run_rtsp_scan(
                 rtsp_streams=valid_onvif_streams,
                 onvif_credentials=onvif_credentials,
                 vendor_override="",
+                use_exhaustive_paths=True,
             )
 
             fallback_attempts = _build_rtsp_attempts(
@@ -1689,7 +1698,7 @@ def _run_rtsp_scan(
                     ports=len(fallback_ports),
                     paths=len(fallback_paths),
                     threads=fallback_thread_count,
-                    vendor_identified=True,
+                    vendor_identified=bool(vendor),
                 ):
                     tui.info(
                         "Trying {attempts} RTSP combination(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)...",
@@ -1757,7 +1766,7 @@ def _should_offer_exhaustive_rtsp_scan(
     """
     Return True if an exhaustive RTSP fallback should be proposed.
     """
-    return bool(vendor)
+    return True
 
 def _confirm_exhaustive_rtsp_scan(
     tui: TUI,
