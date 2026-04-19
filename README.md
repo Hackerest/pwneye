@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/codename-panopticon-black" alt="codename panopticon">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey" alt="macOS and Linux">
-  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License"></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-GPLv3-blue" alt="GNU GPL v3.0"></a>
 </p>
 
 `pwneye` is a focused and portable offensive security tool for working with IP cameras that expose **ONVIF** and **RTSP** services, aiming to give security researchers and hackers an easy way to handle discovery, authentication testing, metadata collection, stream validation, and follow-up actions from a single CLI workflow.
