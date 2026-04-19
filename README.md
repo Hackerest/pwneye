@@ -10,7 +10,7 @@
   <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-GPLv3-blue" alt="GNU GPL v3.0"></a>
 </p>
 
-`pwneye` is a focused and portable offensive security tool for working with IP cameras that expose **ONVIF** and **RTSP** services, aiming to give security researchers and hackers an easy way to handle discovery, authentication testing, metadata collection, stream validation, and follow-up actions from a single CLI workflow.
+`pwneye` is a focused and portable offensive security tool for working with IP cameras that expose **ONVIF** and **RTSP** services, aiming to give security researchers and hackers an easy way to handle discovery, authentication testing, metadata collection, stream validation, recording, and follow-up actions from a single CLI workflow.
 
 Some of the capabilities currently supported include:
 
@@ -29,6 +29,7 @@ Some of the capabilities currently supported include:
 
 - [Installation](#installation)
   - [Python](#python)
+  - [pipx](#pipx)
   - [External Dependencies](#external-dependencies)
 - [Getting Started](#getting-started)
 - [ONVIF](#onvif)
@@ -49,12 +50,33 @@ Some of the capabilities currently supported include:
 ### Python
 
 ```bash
-git clone https://github.com/hackerest/pwneye
+git clone https://github.com/Hackerest/pwneye
 cd pwneye
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python3 pwneye.py --help
+```
+
+### pipx
+
+Install `pwneye` as a system-wide CLI command from GitHub:
+
+```bash
+pipx install git+https://github.com/Hackerest/pwneye.git
+pwneye --help
+```
+
+Uninstall it:
+
+```bash
+pipx uninstall pwneye
+```
+
+Upgrade it later from the same GitHub source:
+
+```bash
+pipx upgrade pwneye
 ```
 
 ### External Dependencies
