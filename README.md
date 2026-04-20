@@ -116,7 +116,7 @@ pwneye --discover
 
 Use fixed RTSP credentials or wordlists:
 
-```bash
+```
 pwneye -t 192.168.1.135 --username admin --password admin
 pwneye -t 192.168.1.135 --username admin --password ~/wordlists/passwords.txt
 pwneye -t 192.168.1.135 --username ~/wordlists/users.txt --password admin123
@@ -139,7 +139,7 @@ In `pwneye`, ONVIF is the protocol that usually gives the richest post-auth cont
 
 Use WS-Discovery to identify ONVIF-capable devices on the local network:
 
-```bash
+```
 pwneye --discover
 
 [info] Starting continuous ONVIF discovery on the local network
@@ -169,7 +169,7 @@ The discovery loop keeps probing every few seconds, prints only newly discovered
 
 Run ONVIF-only bruteforce with a fixed username and a password file:
 
-```bash
+```
 pwneye -t 192.168.1.135 -ou admin -op ~/wordlists/rockyou-short.txt --skip-rtsp --threads 5
 
 [info] Checking if the target (192.168.1.135) is reachable...
@@ -197,7 +197,7 @@ Useful options:
 
 If ONVIF authentication succeeds, you can request a reboot directly:
 
-```bash
+```
 pwneye -t 192.168.1.135 --reboot
 
 [info] Found cached ONVIF/RTSP credential(s) for 192.168.1.135
@@ -236,7 +236,7 @@ pwneye -t 192.168.1.135 --vendor tenda
 
 You can also fetch only the RTSP banner and exit:
 
-```bash
+```
 pwneye -t 192.168.1.135 --skip-onvif --banner
 
 ...
@@ -295,7 +295,7 @@ pwneye -t 192.168.1.135 --record living-room.mp4
 
 Record without opening the preview window:
 
-```bash
+```
 pwneye -t 192.168.1.135 --record living-room.mp4 --no-video
 
 ...
