@@ -27,11 +27,10 @@ Some of the capabilities currently supported include:
 
 ## Demo
 
-[demo](assets/demo.mp4)
+https://github.com/user-attachments/assets/6913632b-326d-455e-aa0d-be6bf9b3e66c
 
 ## Table of Contents
 
-- [DEMO](#demo)
 - [Installation](#installation)
   - [Python](#python)
   - [pipx](#pipx)
