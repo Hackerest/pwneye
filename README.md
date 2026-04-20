@@ -25,8 +25,13 @@ Some of the capabilities currently supported include:
 - RTSP stream validation, preview via `ffplay`, and recording via `ffmpeg`
 - Per-target caching of successful ONVIF and RTSP findings under `~/.pwneye`
 
+## Demo
+
+[demo](assets/demo.mp4)
+
 ## Table of Contents
 
+- [DEMO](#demo)
 - [Installation](#installation)
   - [Python](#python)
   - [pipx](#pipx)
