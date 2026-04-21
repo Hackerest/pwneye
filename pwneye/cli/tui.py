@@ -7,6 +7,7 @@ from rich.text import Text
 from rich.markup import escape
 
 from pwneye.config import DEVELOPER, VERSION, CODENAME, REPO
+from pwneye.core.types import PromptInterrupt
 
 def print_banner(console: Console) -> None:
     """
@@ -269,7 +270,7 @@ class TUI:
                     self.console.file.flush()
                 else:
                     self.interrupted(interrupt_message)
-                raise
+                raise PromptInterrupt from None
 
     def select(
         self,
@@ -310,13 +311,8 @@ class TUI:
                 return items[index - 1]
 
             except KeyboardInterrupt:
-                if interrupt_message is None:
-                    self.stop_live()
-                    self.console.file.write("\r\033[2K")
-                    self.console.file.flush()
-                else:
-                    self.interrupted(interrupt_message)
-                raise
+                self.interrupted()
+                raise PromptInterrupt from None
 
             except ValueError:
                 self.warning(

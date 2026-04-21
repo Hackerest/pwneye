@@ -9,7 +9,7 @@ from pathlib import Path
 
 from pwneye.core import bootstrap
 
-from pwneye.core.types import ExitCode, Result, RtspAttempt, RtspProbeResult, TUI
+from pwneye.core.types import ExitCode, PromptInterrupt, Result, RtspAttempt, RtspProbeResult, TUI
 
 from pwneye.core.network import common as netcomm
 from pwneye.core.network import onvif, rtsp
@@ -48,6 +48,8 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
                 cache_entry,
                 tui,
             )
+        except PromptInterrupt:
+            raise
         except KeyboardInterrupt:
             if not args.skip_rtsp and not args.reboot:
                 tui.warning("ONVIF scan interrupted. Continuing with RTSP...")
@@ -194,7 +196,7 @@ def _load_target_cache(
         return None
 
     if args.fresh:
-        tui.info("Ignoring cached credentials due to --fresh")
+        tui.info("Ignoring cached data due to --fresh")
         return None
 
     cache_entry = cachedata.load_target(args.target)
@@ -539,6 +541,7 @@ def _run_onvif_scan(
     credentials = None
     successful_port = None
     responsive_onvif_ports: list[int] | None = None
+    extend_onvif_to_common = False
     rtsp_onvif_usernames, rtsp_onvif_passwords = _rtsp_credentials_not_tested_via_onvif(args, onvif_kb)
 
     cached_onvif_auth = cachedata.get_cached_onvif_auth(cache_entry)
@@ -568,12 +571,19 @@ def _run_onvif_scan(
         elif not args.onvif_username and args.onvif_password:
             tui.warning("Only ONVIF password provided, testing common usernames")
 
-        camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(args, onvif_kb, tui)
+        camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(
+            args,
+            onvif_kb,
+            tui,
+            responsive_ports=responsive_onvif_ports,
+        )
 
         if camera is None:
             tui.warning("Unable to authenticate via ONVIF using provided credentials")
             if not tui.confirm("Do you want to extend the test to common ONVIF credentials?"):
                 return [], None, None, False
+
+            extend_onvif_to_common = True
 
             # Clear forced credentials to allow full KB usage
             args.onvif_username = None
@@ -581,10 +591,17 @@ def _run_onvif_scan(
 
     # ---------- SECOND ATTEMPT: common credentials ----------
     if camera is None:
-        if not args.onvif_username and not args.onvif_password:
+        if extend_onvif_to_common:
+            tui.info("Extending ONVIF authentication to common credentials...")
+        elif not args.onvif_username and not args.onvif_password:
             tui.info("No explicit ONVIF credentials specified, trying common ONVIF credentials...")
         tui.info("Trying ONVIF authentication using common username(s) and password(s)...")
-        camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(args, onvif_kb, tui)
+        camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(
+            args,
+            onvif_kb,
+            tui,
+            responsive_ports=responsive_onvif_ports,
+        )
 
         if camera is None and (rtsp_onvif_usernames or rtsp_onvif_passwords):
             if tui.confirm("ONVIF authentication failed with the common credential pool. Try the RTSP credentials too?", default=False):
@@ -688,6 +705,7 @@ def _detect_onvif_camera(
     args: argparse.Namespace,
     onvif_kb: dict,
     tui: TUI,
+    responsive_ports: list[int] | None = None,
 ) -> tuple[object | None, tuple[str, str] | None, int | None, list[int] | None]:
     """
     Detect and authenticate to ONVIF camera.
@@ -703,6 +721,7 @@ def _detect_onvif_camera(
         usernames=usernames,
         passwords=passwords,
         tui=tui,
+        responsive_ports=responsive_ports,
     )
 
 def _attempt_onvif_login(
@@ -1080,6 +1099,8 @@ def _resolve_rtsp_ports(
 
     # --- 3. Common RTSP ports ---
     remaining_ports = [p for p in kb_ports if p not in tested_ports]
+    ports_before_extended_scan: set[int] | None = None
+    stopped_after_first_rtsp_port = False
 
     tui.info("Testing common RTSP ports from knowledge base")
 
@@ -1102,16 +1123,17 @@ def _resolve_rtsp_ports(
                 is_last = idx == len(remaining_ports) - 1
                 if not is_last:
                     tui.stop_live()
-                    try:
-                        should_continue = tui.confirm("RTSP service found. Continue scanning remaining ports?", default=False, interrupt_message=None)
-                    except KeyboardInterrupt:
-                        tui.info("Stopping RTSP port discovery and continuing with the discovered RTSP port(s)")
-                        break
+                    should_continue = tui.confirm("RTSP service found. Continue scanning remaining ports?", default=False)
 
                     if not should_continue:
                         tui.info("Stopping RTSP port discovery at user request")
+                        stopped_after_first_rtsp_port = True
                         break
+                    if ports_before_extended_scan is None:
+                        ports_before_extended_scan = set(valid_ports)
                     tui.start_live("Checking common RTSP ports...")
+    except PromptInterrupt:
+        raise
     except KeyboardInterrupt:
         if valid_ports:
             tui.stop_live()
@@ -1123,6 +1145,17 @@ def _resolve_rtsp_ports(
 
     if not valid_ports:
         tui.warning("No RTSP-compatible ports were discovered")
+    elif stopped_after_first_rtsp_port:
+        pass
+    elif ports_before_extended_scan is not None:
+        additional_ports = [port for port in valid_ports if port not in ports_before_extended_scan]
+        if additional_ports:
+            tui.success(
+                "Additional RTSP port(s) detected: {ports}",
+                ports=", ".join(str(p) for p in additional_ports),
+            )
+        else:
+            tui.info("No additional RTSP ports were discovered")
     else:
         tui.success("RTSP service detected on port(s): {ports}", ports=", ".join(str(p) for p in valid_ports))
 
@@ -1579,7 +1612,9 @@ def _run_rtsp_scan(
         tui=tui,
     ) if onvif_streams else []
 
-    cached_manufacturer = cachedata.get_cached_onvif_manufacturer(cachedata.load_target(args.target))
+    cached_manufacturer = None
+    if not args.no_cache and not args.fresh:
+        cached_manufacturer = cachedata.get_cached_onvif_manufacturer(cachedata.load_target(args.target))
 
     vendor = args.vendor or manufacturer or cached_manufacturer
     if args.vendor:

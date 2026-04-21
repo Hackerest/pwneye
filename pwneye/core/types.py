@@ -12,6 +12,11 @@ class ExitCode(IntEnum):
     FAILURE = 1
     USER_ABORT = 2
 
+class PromptInterrupt(KeyboardInterrupt):
+    """
+    Raised when CTRL-C is pressed while waiting for interactive input.
+    """
+
 @dataclass
 class Result:
     ok: bool
@@ -60,7 +65,7 @@ class TUI(Protocol):
         options: Sequence[T],
     ) -> T: ...
 
-    def confirm(self, prompt: str, default: bool = True) -> bool: ...
+    def confirm(self, prompt: str, default: bool = True, interrupt_message: str | None = "CTRL-C detected. Aborting execution...") -> bool: ...
 
 class OnvifKnowledgeBase(TypedDict):
     ports: List[int]
