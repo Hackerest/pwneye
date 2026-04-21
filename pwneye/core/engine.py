@@ -139,12 +139,15 @@ def _resolve_credential_values(value: str) -> list[str]:
 
     candidate = Path(value).expanduser()
     if candidate.is_file():
-        with candidate.open("r", encoding="utf-8") as handle:
-            return [
-                line.rstrip("\r\n")
-                for line in handle
-                if line.rstrip("\r\n") != ""
-            ]
+        # Wordlists such as rockyou may contain invalid UTF-8 bytes.
+        # Keep scanning instead of aborting on undecodable characters.
+        with candidate.open("r", encoding="utf-8", errors="ignore") as handle:
+            credentials = []
+            for line in handle:
+                credential = line.rstrip("\r\n").removeprefix("\ufeff")
+                if credential != "":
+                    credentials.append(credential)
+            return credentials
 
     return [value]
 
