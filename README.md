@@ -312,6 +312,9 @@ Recording behavior:
 
 ## TODO
 
+- [ ] Add `--snapshot` support to capture a still frame from a validated RTSP stream
+- [ ] Allow `--target` to accept a full RTSP connection string, so ONVIF discovery can be skipped and credential testing can run directly against a known stream path
+- [ ] Add `--connection-strings` / `-cs` to manually provide one or more RTSP connection strings during testing
 - [ ] Add SOCKS proxy support so `pwneye` can operate through a bridge or pivot host that can reach cameras on its own local network
 - [ ] Allow `--target` to accept a file with multiple IPs/hosts so scans can be parallelized across targets
 - [ ] Add support for multi-channel cameras
