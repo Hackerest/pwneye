@@ -43,6 +43,11 @@ class RtspProbeResult:
     stream_available: bool
     error: Optional[str] = None
 
+@dataclass(frozen=True)
+class RtspChannelEntry:
+    channel: int
+    attempt: RtspAttempt
+
 class TUI(Protocol):
     # Basic logging
     def info(self, message: str) -> None: ...
@@ -64,6 +69,13 @@ class TUI(Protocol):
         prompt: str,
         options: Sequence[T],
     ) -> T: ...
+
+    def select_channel(
+        self,
+        channels: Sequence[RtspChannelEntry],
+        prompt: str = "Select channel",
+        indent: int = 0,
+    ) -> RtspChannelEntry: ...
 
     def confirm(self, prompt: str, default: bool = True, interrupt_message: str | None = "CTRL-C detected. Aborting execution...") -> bool: ...
 

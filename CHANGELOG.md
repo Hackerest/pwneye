@@ -9,6 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.1.0] - 2026-05-03 (Panopticon)
+
+### Added
+
+- RTSP snapshot support via `--snapshot`, including timestamped default filenames and integration with the existing preview / no-video flows
+- Manual RTSP connection string support via `--connection-string` / `-cn`, with file input support and compatibility with templated multi-channel paths such as `{channel}`
+- First public iteration of RTSP multi-channel support, including:
+  - `--multi-channel` path prioritization
+  - channel-aware RTSP template expansion
+  - interactive channel selection
+  - per-target caching of discovered channels
+- Runtime update checks against the latest GitHub release, plus an explicit `--check-updates` mode
+- MOTD support with randomized startup messages loaded from the local knowledge base
+
+### Changed
+
+- Automatic recording and snapshot outputs are now stored under per-target directories inside `~/.pwneye/recordings` and `~/.pwneye/snapshots`
+- RTSP target resolution now supports user-specified connection strings as first-class inputs, reducing noise when the stream path is already known
+- Cache handling is more explicit when credentials are passed on the command line, avoiding misleading reuse messages and clarifying when cached results are ignored
+- ONVIF reboot feedback is now more descriptive and performs an automatic reachability check after the reboot request is sent
+- General RTSP and ONVIF flow messaging has been refined to reduce redundancy and make scanning state easier to understand
+- `--help` output has been revised to make fallback behaviors, optional inputs, and RTSP targeting options clearer
+
+### Fixed
+
+- Improved `CTRL-C` handling across interactive prompts, scanning loops, recording, and channel enumeration to reduce stack traces and inconsistent exits
+- Improved post-discovery RTSP handling so preview, snapshot, recording, and multi-channel flows behave more consistently across flag combinations
+- Improved cache interactions for targets that were already known, especially when the user forces fresh scans or supplies explicit credentials
+
 ## [1.0.0] - 2026-04-05 (Panopticon)
 
 ### Added

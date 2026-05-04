@@ -187,6 +187,45 @@ def upsert_rtsp_success(
     save_target(host, data)
 
 
+def upsert_rtsp_channels(
+    host: str,
+    *,
+    channels: list[dict],
+) -> None:
+    """
+    Persist valid RTSP channels discovered for the target.
+    """
+    if not channels:
+        return
+
+    data = load_target(host) or _empty_document(host)
+    rtsp = data.setdefault("rtsp", {})
+
+    normalized = []
+    seen = set()
+
+    for channel in channels:
+        channel_id = channel.get("channel")
+        url = channel.get("url")
+
+        if channel_id is None or not url or channel_id in seen:
+            continue
+
+        normalized.append({
+            "channel": channel_id,
+            "port": channel.get("port"),
+            "path": channel.get("path"),
+            "protocol": channel.get("protocol"),
+            "url": url,
+        })
+        seen.add(channel_id)
+
+    if normalized:
+        rtsp["channels"] = normalized
+
+    save_target(host, data)
+
+
 def get_cached_onvif_auth(data: dict | None) -> dict | None:
     """
     Return cached ONVIF authentication details, if available.
@@ -276,3 +315,36 @@ def get_cached_rtsp_auth(data: dict | None) -> dict | None:
         "username": username,
         "password": password,
     }
+
+
+def get_cached_rtsp_channels(data: dict | None) -> list[dict]:
+    """
+    Return cached RTSP channel details, if available.
+    """
+    if not data:
+        return []
+
+    rtsp = data.get("rtsp") or {}
+    channels = rtsp.get("channels") or []
+    if not isinstance(channels, list):
+        return []
+
+    normalized = []
+    for channel in channels:
+        if not isinstance(channel, dict):
+            continue
+
+        channel_id = channel.get("channel")
+        url = channel.get("url")
+        if channel_id is None or not url:
+            continue
+
+        normalized.append({
+            "channel": channel_id,
+            "port": channel.get("port"),
+            "path": channel.get("path"),
+            "protocol": channel.get("protocol"),
+            "url": url,
+        })
+
+    return normalized

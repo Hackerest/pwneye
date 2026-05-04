@@ -1,5 +1,6 @@
 import argparse
 import queue
+import re
 import subprocess
 import tempfile
 import threading
@@ -9,7 +10,7 @@ from pathlib import Path
 
 from pwneye.core import bootstrap
 
-from pwneye.core.types import ExitCode, PromptInterrupt, Result, RtspAttempt, RtspProbeResult, TUI
+from pwneye.core.types import ExitCode, PromptInterrupt, Result, RtspAttempt, RtspChannelEntry, RtspProbeResult, TUI
 
 from pwneye.core.network import common as netcomm
 from pwneye.core.network import onvif, rtsp
@@ -17,9 +18,10 @@ from pwneye.core.network import onvif, rtsp
 from pwneye.core.storage import cache as cachedata
 from pwneye.core.storage import onvif as onvifdata
 from pwneye.core.storage import rtsp as rtspdata
-from pwneye.config import RECORDINGS_DIR
+from pwneye.config import RECORDINGS_DIR, SNAPSHOTS_DIR
 
 ONVIF_SCOPE_PREFIX = "onvif://www.onvif.org/"
+RTSP_CHANNEL_SELECT_PROMPT = "Select channel (CTRL-C to exit)"
 
 def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
     init = _initialize_environment(args, tui)
@@ -153,6 +155,26 @@ def _resolve_credential_values(value: str) -> list[str]:
 
     return [value]
 
+def _normalize_rtsp_connection_string(value: str) -> str:
+    """
+    Normalize a user-provided RTSP connection string/path candidate.
+    """
+    candidate = value.strip()
+    if candidate.startswith("rtsp://"):
+        candidate = rtsp.parse_rtsp_url(candidate)["path"] or "/"
+    if not candidate.startswith("/"):
+        candidate = f"/{candidate}"
+    return candidate
+
+def _resolve_connection_string_values(value: str) -> list[str]:
+    """
+    Resolve one or more RTSP connection strings from a literal value or file.
+    """
+    return [
+        _normalize_rtsp_connection_string(candidate)
+        for candidate in _resolve_credential_values(value)
+    ]
+
 def _prioritize_rtsp_ports(ports: list[int]) -> list[int]:
     """
     Prioritize the most common RTSP ports before trying rarer ones.
@@ -192,11 +214,10 @@ def _load_target_cache(
     Load the target cache unless caching has been explicitly disabled.
     """
     if args.no_cache:
-        tui.info("Cache disabled via --no-cache")
         return None
 
     if args.fresh:
-        tui.info("Ignoring cached data due to --fresh")
+        tui.warning("Ignoring cached data due to --fresh")
         return None
 
     cache_entry = cachedata.load_target(args.target)
@@ -204,9 +225,12 @@ def _load_target_cache(
         return None
 
     cached_protocols = []
-    if cachedata.get_cached_onvif_auth(cache_entry):
+    has_cached_onvif_auth = cachedata.get_cached_onvif_auth(cache_entry) is not None
+    has_cached_rtsp_auth = cachedata.get_cached_rtsp_auth(cache_entry) is not None
+
+    if not args.skip_onvif and has_cached_onvif_auth:
         cached_protocols.append("ONVIF")
-    if cachedata.get_cached_rtsp_auth(cache_entry):
+    if not args.skip_rtsp and has_cached_rtsp_auth:
         cached_protocols.append("RTSP")
 
     if cached_protocols:
@@ -215,6 +239,10 @@ def _load_target_cache(
             protocols="/".join(cached_protocols),
             target=args.target,
         )
+        if has_cached_onvif_auth and not args.skip_onvif and (args.onvif_username or args.onvif_password):
+            tui.warning("Ignoring cached ONVIF credentials because explicit ONVIF credentials were provided")
+        if has_cached_rtsp_auth and not args.skip_rtsp and (args.username or args.password):
+            tui.warning("Ignoring cached RTSP credentials because explicit RTSP credentials were provided")
 
     return cache_entry
 
@@ -227,7 +255,7 @@ def _initialize_environment(args: argparse.Namespace, tui: TUI) -> Result:
         tui.info("First execution detected, initializing pwneye...")
 
     # Runtime dirs
-    pwneye_path, cache_path, recordings_path = bootstrap.ensure_runtime_dirs()
+    pwneye_path, cache_path, recordings_path, snapshots_path = bootstrap.ensure_runtime_dirs()
 
     if pwneye_path:
         tui.info2("Runtime directory initialized ({path})", path=pwneye_path)
@@ -235,13 +263,19 @@ def _initialize_environment(args: argparse.Namespace, tui: TUI) -> Result:
         tui.info2("Cache directory initialized ({path})", path=cache_path)
     if recordings_path:
         tui.info2("Recordings directory initialized ({path})", path=recordings_path)
+    if snapshots_path:
+        tui.info2("Snapshots directory initialized ({path})", path=snapshots_path)
 
     # External dependencies
     dependencies = []
     if not args.discover:
-        dependencies = ["ffplay", "ffprobe"]
-        if args.record is not None:
+        dependencies = ["ffprobe"]
+
+        if args.record is not None or args.snapshot is not None:
             dependencies.append("ffmpeg")
+
+        if args.snapshot is None and (args.record is None or not args.no_video):
+            dependencies.append("ffplay")
 
     if dependencies:
         ok, missing = bootstrap.check_dependencies(dependencies)
@@ -542,9 +576,12 @@ def _run_onvif_scan(
     successful_port = None
     responsive_onvif_ports: list[int] | None = None
     extend_onvif_to_common = False
+    used_cached_onvif_auth = False
     rtsp_onvif_usernames, rtsp_onvif_passwords = _rtsp_credentials_not_tested_via_onvif(args, onvif_kb)
 
-    cached_onvif_auth = cachedata.get_cached_onvif_auth(cache_entry)
+    cached_onvif_auth = None
+    if not args.onvif_username and not args.onvif_password:
+        cached_onvif_auth = cachedata.get_cached_onvif_auth(cache_entry)
 
     if cached_onvif_auth:
         tui.info("Trying cached ONVIF credentials for the target...")
@@ -558,24 +595,25 @@ def _run_onvif_scan(
         )
 
         if camera is not None:
-            tui.info2("Using previously cached ONVIF credentials")
+            used_cached_onvif_auth = True
         else:
             tui.warning("Cached ONVIF credentials are no longer valid")
 
     # ---------- FIRST ATTEMPT: user-provided credentials ----------
     if camera is None and (args.onvif_username or args.onvif_password):
-        tui.info("Trying ONVIF authentication using user-provided credentials...")
-
+        auth_hint = None
         if args.onvif_username and not args.onvif_password:
-            tui.warning("Only ONVIF username provided, testing common passwords")
+            auth_hint = "Only ONVIF username provided, testing common passwords"
         elif not args.onvif_username and args.onvif_password:
-            tui.warning("Only ONVIF password provided, testing common usernames")
+            auth_hint = "Only ONVIF password provided, testing common usernames"
 
         camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(
             args,
             onvif_kb,
             tui,
             responsive_ports=responsive_onvif_ports,
+            auth_label="Trying ONVIF authentication using user-provided credentials...",
+            auth_hint=auth_hint,
         )
 
         if camera is None:
@@ -592,15 +630,16 @@ def _run_onvif_scan(
     # ---------- SECOND ATTEMPT: common credentials ----------
     if camera is None:
         if extend_onvif_to_common:
-            tui.info("Extending ONVIF authentication to common credentials...")
-        elif not args.onvif_username and not args.onvif_password:
-            tui.info("No explicit ONVIF credentials specified, trying common ONVIF credentials...")
-        tui.info("Trying ONVIF authentication using common username(s) and password(s)...")
+            auth_label = "Extending ONVIF authentication to common credentials..."
+        else:
+            auth_label = "Trying ONVIF authentication using common username(s) and password(s)..."
+
         camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(
             args,
             onvif_kb,
             tui,
             responsive_ports=responsive_onvif_ports,
+            auth_label=auth_label,
         )
 
         if camera is None and (rtsp_onvif_usernames or rtsp_onvif_passwords):
@@ -631,6 +670,7 @@ def _run_onvif_scan(
             manufacturer=None,
             streams=None,
             tui=tui,
+            announce=not used_cached_onvif_auth,
         )
         reboot_completed = _reboot_onvif_camera(args, camera, tui)
         return [], None, credentials, reboot_completed
@@ -650,6 +690,7 @@ def _run_onvif_scan(
         manufacturer=manufacturer,
         streams=streams or [],
         tui=tui,
+        announce=not used_cached_onvif_auth,
     )
 
     return streams or [], manufacturer, credentials, False
@@ -706,6 +747,8 @@ def _detect_onvif_camera(
     onvif_kb: dict,
     tui: TUI,
     responsive_ports: list[int] | None = None,
+    auth_label: str | None = None,
+    auth_hint: str | None = None,
 ) -> tuple[object | None, tuple[str, str] | None, int | None, list[int] | None]:
     """
     Detect and authenticate to ONVIF camera.
@@ -715,6 +758,16 @@ def _detect_onvif_camera(
     """
     ports, usernames, passwords = _resolve_onvif_targets(args, onvif_kb)
 
+    if responsive_ports is None:
+        if args.onvif_port:
+            tui.info(
+                "Testing user-specified ONVIF port {target}:{port}",
+                target=args.target,
+                port=args.onvif_port,
+            )
+        elif ports == onvif_kb["ports"]:
+            tui.info("Testing common ONVIF ports from knowledge base")
+
     return _attempt_onvif_login(
         args=args,
         ports=ports,
@@ -722,6 +775,8 @@ def _detect_onvif_camera(
         passwords=passwords,
         tui=tui,
         responsive_ports=responsive_ports,
+        auth_label=auth_label,
+        auth_hint=auth_hint,
     )
 
 def _attempt_onvif_login(
@@ -732,10 +787,30 @@ def _attempt_onvif_login(
     tui: TUI,
     live_label: str = "Preparing ONVIF bruteforce...",
     responsive_ports: list[int] | None = None,
+    auth_label: str | None = None,
+    auth_hint: str | None = None,
 ) -> tuple[object | None, tuple[str, str] | None, int | None, list[int] | None]:
     """
     Try ONVIF authentication using the provided ports and credentials.
     """
+    auth_label_printed = False
+    auth_hint_printed = False
+
+    def print_auth_label() -> None:
+        nonlocal auth_label_printed
+        if auth_label is None or auth_label_printed:
+            return
+
+        tui.info(auth_label)
+        auth_label_printed = True
+
+    def print_auth_hint() -> None:
+        nonlocal auth_hint_printed
+        if auth_hint is None or auth_hint_printed:
+            return
+
+        tui.warning(auth_hint)
+        auth_hint_printed = True
 
     def on_port_check(port: int) -> None:
         tui.update_live(
@@ -751,6 +826,8 @@ def _attempt_onvif_login(
             target=args.target,
             port=port,
         )
+        print_auth_label()
+        print_auth_hint()
 
     def on_attempt(port: int, username: str, password: str) -> None:
         tui.update_live(
@@ -761,6 +838,10 @@ def _attempt_onvif_login(
                 target=args.target,
             )
         )
+
+    if responsive_ports:
+        print_auth_label()
+        print_auth_hint()
 
     tui.start_live(live_label)
     try:
@@ -804,6 +885,7 @@ def _persist_onvif_cache_entry(
     manufacturer: str | None,
     streams: list[str] | None,
     tui: TUI,
+    announce: bool = True,
 ) -> None:
     """
     Save a successful ONVIF authentication to cache.
@@ -832,7 +914,8 @@ def _persist_onvif_cache_entry(
         manufacturer=manufacturer,
         streams=streams,
     )
-    tui.info2("Saved ONVIF credentials to cache")
+    if announce:
+        tui.info2("Saved ONVIF credentials to cache")
 
 def _extract_device_info(camera: object, tui: TUI) -> str:
     """
@@ -899,6 +982,9 @@ def _reboot_onvif_camera(
         tui.error("The ONVIF reboot request was rejected or not supported")
         return False
 
+    tui.info2("ONVIF reboot request sent")
+    tui.info("Checking if the camera is still reachable...")
+
     deadline = time.monotonic() + 15
     while time.monotonic() < deadline:
         if not netcomm.is_host_reachable(
@@ -906,16 +992,16 @@ def _reboot_onvif_camera(
             timeout=1.0,
             icmp_attempts=1,
         ):
-            tui.success("ONVIF reboot request accepted. The camera is rebooting.")
+            tui.success("The device has been rebooted!")
             return True
 
         time.sleep(2)
 
-    tui.success(
-        "ONVIF reboot request was sent, but the target still appears to be "
-        "online after 15 seconds."
+    tui.error(
+        "The ONVIF reboot request was sent, but the target still appears to be "
+        "reachable after 15 seconds."
     )
-    return True
+    return False
 
 def _extract_network_config(camera: object, tui: TUI) -> None:
     """Extract and display network configuration."""
@@ -981,11 +1067,22 @@ def _extract_rtsp_streams(camera: object, tui: TUI) -> list[str]:
 def _filter_onvif_rtsp_streams_by_valid_port(
     host: str,
     streams: list[str],
-    tui: TUI
+    tui: TUI,
+    validated_ports: list[int] | None = None,
 ) -> list[str]:
     """
     Return only RTSP streams whose port is reachable and supports RTSP.
     """
+    if validated_ports is not None:
+        valid_ports = {
+            port for port in validated_ports
+            if port in {rtsp.parse_rtsp_url(url)["port"] or 554 for url in streams}
+        }
+        return [
+            url for url in streams
+            if (rtsp.parse_rtsp_url(url)["port"] or 554) in valid_ports
+        ]
+
     checked_ports: set[int] = set()
     valid_ports: set[int] = set()
 
@@ -1274,9 +1371,15 @@ def _resolve_rtsp_targets(
 
     # --- Paths ---
     paths = []
-    if rtsp_streams:
+    provided_connection_strings = _resolve_connection_string_values(args.connection_string)
+
+    if provided_connection_strings:
+        paths.extend(provided_connection_strings)
+    elif rtsp_streams:
         paths.extend(rtsp.parse_rtsp_url(url)["path"] for url in rtsp_streams)
-    if vendor_entry:
+    if provided_connection_strings:
+        pass
+    elif vendor_entry:
         paths.extend(vendor_entry.get("paths", {}).get(args.protocol, []))
     elif use_exhaustive_paths:
         exhaustive_paths = True
@@ -1284,11 +1387,18 @@ def _resolve_rtsp_targets(
     else:
         paths.extend(rtsp_kb["common_paths"])
 
+    paths = _augment_rtsp_paths_for_multichannel(
+        paths,
+        rtsp_kb,
+        args.protocol,
+        prefer_multichannel=args.multi_channel,
+    )
+
     return (
         ports,
         _unique(usernames),
         _unique(passwords),
-        _unique(paths),
+        paths,
         exhaustive_paths,
     )
 
@@ -1327,6 +1437,421 @@ def _expand_rtsp_path(path: str) -> list[str]:
 
     channels = [1, 2, 101, 102]
     return [path.format(channel=channel) for channel in channels]
+
+def _is_multichannel_rtsp_path(path: str) -> bool:
+    """
+    Return True if the RTSP path appears to target a specific channel.
+    """
+    if "{channel}" in path:
+        return True
+
+    lowered = path.lower()
+    return any(marker in lowered for marker in (
+        "chid=",
+        "channel=",
+        "cam=",
+        "camera=",
+        "trackid=",
+    ))
+
+def _prioritize_rtsp_paths(
+    paths: list[str],
+    *,
+    prefer_multichannel: bool,
+) -> list[str]:
+    """
+    Reorder RTSP paths, optionally preferring multi-channel candidates first.
+    """
+    unique_paths = _unique(paths)
+    if not prefer_multichannel:
+        return unique_paths
+
+    multichannel = [path for path in unique_paths if _is_multichannel_rtsp_path(path)]
+    regular = [path for path in unique_paths if not _is_multichannel_rtsp_path(path)]
+    return multichannel + regular
+
+def _augment_rtsp_paths_for_multichannel(
+    paths: list[str],
+    rtsp_kb: dict,
+    protocol: str,
+    *,
+    prefer_multichannel: bool,
+) -> list[str]:
+    """
+    Augment the current path set with KB multi-channel candidates when requested.
+    """
+    prioritized = _prioritize_rtsp_paths(
+        paths,
+        prefer_multichannel=prefer_multichannel,
+    )
+    if not prefer_multichannel:
+        return prioritized
+
+    if any(_is_multichannel_rtsp_path(path) for path in prioritized):
+        return prioritized
+
+    multichannel_paths = [
+        path
+        for path in rtspdata.get_all_paths(rtsp_kb, protocol)
+        if _is_multichannel_rtsp_path(path)
+    ]
+
+    return _unique(multichannel_paths + prioritized)
+
+_CHANNEL_PATTERNS = (
+    re.compile(r"(?P<key>chID=)(?P<value>\d+)", re.IGNORECASE),
+    re.compile(r"(?P<key>channel=)(?P<value>\d+)", re.IGNORECASE),
+    re.compile(r"(?P<key>cam=)(?P<value>\d+)", re.IGNORECASE),
+    re.compile(r"(?P<key>camera=)(?P<value>\d+)", re.IGNORECASE),
+    re.compile(r"(?P<key>trackID=)(?P<value>\d+)", re.IGNORECASE),
+)
+
+def _extract_rtsp_channel_template(path: str) -> tuple[str, int] | None:
+    """
+    Extract a channel template and the current channel id from a concrete RTSP path.
+    """
+    for pattern in _CHANNEL_PATTERNS:
+        match = pattern.search(path)
+        if match is None:
+            continue
+
+        channel = int(match.group("value"))
+        template = pattern.sub(lambda item: f"{item.group('key')}{{channel}}", path, count=1)
+        return template, channel
+
+    return None
+
+def _build_rtsp_channel_attempt(
+    base_attempt: RtspAttempt,
+    channel_template: str,
+    channel: int,
+) -> RtspAttempt:
+    """
+    Build a concrete RTSP attempt for a specific channel id.
+    """
+    path = channel_template.format(channel=channel)
+    url = rtsp.build_rtsp_url(
+        host=base_attempt.host,
+        port=base_attempt.port,
+        path=path,
+        username=base_attempt.username,
+        password=base_attempt.password,
+        use_tcp=base_attempt.protocol == "tcp",
+    )
+    return RtspAttempt(
+        host=base_attempt.host,
+        port=base_attempt.port,
+        path=path,
+        username=base_attempt.username,
+        password=base_attempt.password,
+        protocol=base_attempt.protocol,
+        url=url,
+    )
+
+def _probe_rtsp_attempt(
+    attempt: RtspAttempt,
+    *,
+    timeout: int,
+) -> RtspProbeResult:
+    """
+    Probe a single RTSP attempt, falling back to ffprobe when useful.
+    """
+    result = rtsp.probe_rtsp_url(
+        attempt.url,
+        timeout=timeout,
+    )
+
+    if (
+        (attempt.username or attempt.password)
+        and not result.stream_available
+        and (
+            result.status_code == 401
+            or result.error is not None
+        )
+    ):
+        result = rtsp.probe_rtsp_url_with_ffprobe(
+            attempt.url,
+            protocol=attempt.protocol,
+            timeout=timeout,
+        )
+
+    return result
+
+def _build_rtsp_attempt_from_stream(
+    stream_url: str,
+    username: str,
+    password: str,
+    protocol: str,
+) -> RtspAttempt:
+    """
+    Build an RTSP attempt from a concrete stream URL and a credential pair.
+    """
+    parsed = rtsp.parse_rtsp_url(stream_url)
+    url = rtsp.build_rtsp_url(
+        host=parsed["host"] or "",
+        port=parsed["port"] or 554,
+        path=parsed["path"] or "/",
+        username=username,
+        password=password,
+        use_tcp=protocol == "tcp",
+    )
+    return RtspAttempt(
+        host=parsed["host"] or "",
+        port=parsed["port"] or 554,
+        path=parsed["path"] or "/",
+        username=username,
+        password=password,
+        protocol=protocol,
+        url=url,
+    )
+
+def _persist_rtsp_channels(
+    args: argparse.Namespace,
+    channels: list[RtspChannelEntry],
+    tui: TUI,
+) -> None:
+    """
+    Save discovered RTSP channels to cache.
+    """
+    if args.no_cache or not channels:
+        return
+
+    serialized = [
+        {
+            "channel": entry.channel,
+            "port": entry.attempt.port,
+            "path": entry.attempt.path,
+            "protocol": entry.attempt.protocol,
+            "url": entry.attempt.url,
+        }
+        for entry in channels
+    ]
+
+    existing = cachedata.get_cached_rtsp_channels(cachedata.load_target(args.target))
+    if existing == serialized:
+        return
+
+    cachedata.upsert_rtsp_channels(
+        args.target,
+        channels=serialized,
+    )
+    tui.info2("Saved RTSP channel enumeration to cache")
+
+def _build_cached_rtsp_channel_entries(
+    base_attempt: RtspAttempt,
+    cached_channels: list[dict],
+) -> list[RtspChannelEntry]:
+    """
+    Rebuild cached RTSP channel entries using the current credential context.
+    """
+    entries = []
+
+    for channel in cached_channels:
+        channel_id = channel.get("channel")
+        path = channel.get("path")
+        port = channel.get("port") or base_attempt.port
+        protocol = channel.get("protocol") or base_attempt.protocol
+
+        if channel_id is None or not path:
+            continue
+
+        url = rtsp.build_rtsp_url(
+            host=base_attempt.host,
+            port=port,
+            path=path,
+            username=base_attempt.username,
+            password=base_attempt.password,
+            use_tcp=protocol == "tcp",
+        )
+
+        entries.append(
+            RtspChannelEntry(
+                channel=int(channel_id),
+                attempt=RtspAttempt(
+                    host=base_attempt.host,
+                    port=port,
+                    path=path,
+                    username=base_attempt.username,
+                    password=base_attempt.password,
+                    protocol=protocol,
+                    url=url,
+                ),
+            )
+        )
+
+    return entries
+
+def _discover_rtsp_channels(
+    base_attempt: RtspAttempt,
+    args: argparse.Namespace,
+    tui: TUI,
+) -> tuple[list[RtspChannelEntry], bool]:
+    """
+    Enumerate additional RTSP channels from a validated channel-based template.
+    """
+    extracted = _extract_rtsp_channel_template(base_attempt.path)
+    if extracted is None:
+        return [RtspChannelEntry(channel=1, attempt=base_attempt)], False
+
+    channel_template, initial_channel = extracted
+    discovered: dict[int, RtspChannelEntry] = {
+        initial_channel: RtspChannelEntry(channel=initial_channel, attempt=base_attempt)
+    }
+    tested = {initial_channel}
+
+    def try_channel(channel: int) -> bool:
+        if channel in tested or channel <= 0:
+            return False
+
+        tested.add(channel)
+        attempt = _build_rtsp_channel_attempt(base_attempt, channel_template, channel)
+        tui.update_live(f"Trying channel {channel}: {attempt.url}")
+
+        result = _probe_rtsp_attempt(
+            attempt,
+            timeout=args.timeout,
+        )
+        if result.stream_available:
+            discovered[channel] = RtspChannelEntry(channel=channel, attempt=attempt)
+            tui.success("RTSP channel {channel} is valid", channel=channel)
+            return True
+
+        return False
+
+    def follow_up_from(channel: int) -> None:
+        consecutive_failures = 0
+        next_channel = channel + 1
+
+        while consecutive_failures < 3:
+            if try_channel(next_channel):
+                consecutive_failures = 0
+            else:
+                consecutive_failures += 1
+            next_channel += 1
+
+    initial_waves = [
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        list(range(9, 17)),
+        [101, 102, 103, 104],
+        [201, 202, 203, 204],
+    ]
+
+    tui.info("Enumerating RTSP channels using the validated connection template...")
+    tui.info("Press CTRL-C to stop channel enumeration and choose from the channels found")
+    tui.start_live("Enumerating RTSP channels...")
+
+    next_candidates = {
+        "low": 17,
+        "mid": 105,
+        "high": 205,
+    }
+    interrupted = False
+
+    try:
+        for wave in initial_waves:
+            for channel in wave:
+                if try_channel(channel):
+                    follow_up_from(channel)
+
+        if any(channel < 100 for channel in discovered):
+            next_candidates["low"] = max(channel for channel in discovered if channel < 100) + 1
+        else:
+            next_candidates["low"] = None
+
+        if any(100 <= channel < 200 for channel in discovered):
+            next_candidates["mid"] = max(channel for channel in discovered if 100 <= channel < 200) + 1
+        else:
+            next_candidates["mid"] = None
+
+        if any(200 <= channel < 300 for channel in discovered):
+            next_candidates["high"] = max(channel for channel in discovered if 200 <= channel < 300) + 1
+        else:
+            next_candidates["high"] = None
+
+        while any(value is not None for value in next_candidates.values()):
+            for family in ("low", "mid", "high"):
+                candidate = next_candidates[family]
+                if candidate is None:
+                    continue
+
+                if try_channel(candidate):
+                    follow_up_from(candidate)
+
+                next_candidates[family] = candidate + 1
+    except KeyboardInterrupt:
+        interrupted = True
+        tui.console.file.write("\r\033[2K")
+        tui.console.file.flush()
+        tui.info("Stopping RTSP channel enumeration and using the channels discovered so far")
+    finally:
+        tui.stop_live()
+
+    if len(discovered) == 1:
+        tui.info("No additional RTSP channels were discovered")
+
+    return [
+        discovered[channel]
+        for channel in sorted(discovered)
+    ], interrupted
+
+def _maybe_select_rtsp_channel(
+    attempt: RtspAttempt,
+    args: argparse.Namespace,
+    tui: TUI,
+) -> tuple[RtspAttempt, list[RtspChannelEntry] | None]:
+    """
+    Optionally enumerate and select a specific RTSP channel from a multi-channel template.
+    """
+    extracted = _extract_rtsp_channel_template(attempt.path)
+    if extracted is None:
+        return attempt, None
+
+    if not args.no_cache and not args.fresh:
+        cached_entries = _build_cached_rtsp_channel_entries(
+            attempt,
+            cachedata.get_cached_rtsp_channels(cachedata.load_target(args.target)),
+        )
+        if cached_entries:
+            tui.info2("Using previously cached RTSP channel enumeration")
+            tui.info("Run the tool again with --fresh to re-enumerate the RTSP channels")
+
+            if len(cached_entries) == 1:
+                return cached_entries[0].attempt, cached_entries
+
+            if args.no_video and args.snapshot is None and args.record is None:
+                return cached_entries[0].attempt, cached_entries
+
+            selected = tui.select_channel(
+                cached_entries,
+                prompt=RTSP_CHANNEL_SELECT_PROMPT,
+            )
+            return selected.attempt, cached_entries
+
+    if not tui.confirm(
+        "This RTSP stream may support multiple channels. Try to enumerate them?",
+        default=True,
+    ):
+        return attempt, None
+
+    channels, interrupted = _discover_rtsp_channels(attempt, args, tui)
+    _persist_rtsp_channels(args, channels, tui)
+
+    if interrupted and args.no_video and args.record is None and args.snapshot is None:
+        tui.interrupted()
+        raise KeyboardInterrupt
+
+    if len(channels) == 1:
+        return channels[0].attempt, channels
+
+    if args.no_video and args.snapshot is None and args.record is None:
+        return channels[0].attempt, channels
+
+    selected = tui.select_channel(
+        channels,
+        prompt=RTSP_CHANNEL_SELECT_PROMPT,
+    )
+    return selected.attempt, channels
 
 def _build_rtsp_attempts(
     host: str,
@@ -1405,7 +1930,7 @@ def _try_cached_rtsp_auth(
     """
     Try a previously cached RTSP credential and stream before running a fresh scan.
     """
-    if args.no_cache or args.fresh:
+    if args.no_cache or args.fresh or args.username or args.password or args.connection_string:
         return False
 
     cached_rtsp = cachedata.get_cached_rtsp_auth(cache_entry)
@@ -1473,9 +1998,7 @@ def _format_attempt_label(attempt: RtspAttempt) -> str:
     """
     Format a one-line label for live brute-force output.
     """
-    username = attempt.username or "(empty)"
-    password = attempt.password or "(empty)"
-    return f"Trying {attempt.url} [{username}:{password}]"
+    return f"Trying {attempt.url}"
 
 def _run_rtsp_bruteforce(
     attempts: list[RtspAttempt],
@@ -1610,7 +2133,9 @@ def _run_rtsp_scan(
         host=args.target,
         streams=onvif_streams,
         tui=tui,
+        validated_ports=rtsp_ports,
     ) if onvif_streams else []
+    provided_connection_strings = bool(_resolve_connection_string_values(args.connection_string))
 
     cached_manufacturer = None
     if not args.no_cache and not args.fresh:
@@ -1623,6 +2148,8 @@ def _run_rtsp_scan(
         tui.info2("RTSP vendor inferred from ONVIF: {vendor}", vendor=vendor)
     elif cached_manufacturer:
         tui.info2("RTSP vendor loaded from cache: {vendor}", vendor=vendor)
+    elif provided_connection_strings:
+        vendor = None
     else:
         vendor = _detect_rtsp_vendor(args.target, rtsp_ports, rtsp_kb, tui, no_cache=args.no_cache)
 
@@ -1681,7 +2208,9 @@ def _run_rtsp_scan(
             return False
 
     message = (
-        "Trying {attempts} RTSP combination(s) using generic path(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)..."
+        "Trying {attempts} RTSP combination(s) using user-provided connection string(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)..."
+        if provided_connection_strings
+        else "Trying {attempts} RTSP combination(s) using generic path(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)..."
         if vendor is None and not exhaustive_paths
         else "Trying {attempts} RTSP combination(s) across {ports} port(s), {paths} path(s) and {threads} thread(s)..."
     )
@@ -1702,7 +2231,7 @@ def _run_rtsp_scan(
     )
 
     if match is None or result is None:
-        if not exhaustive_paths and _should_offer_exhaustive_rtsp_scan(args, vendor):
+        if not provided_connection_strings and not exhaustive_paths and _should_offer_exhaustive_rtsp_scan(args, vendor):
             fallback_ports, fallback_usernames, fallback_passwords, fallback_paths, _ = _resolve_rtsp_targets(
                 args=args,
                 rtsp_kb=rtsp_kb,
@@ -1764,6 +2293,7 @@ def _run_rtsp_scan(
                 return False
 
             tui.warning("Unable to identify a working RTSP stream")
+            tui.info(_build_rtsp_failure_hint(args))
             return False
 
     tui.success("Working RTSP stream discovered")
@@ -1796,6 +2326,33 @@ def _run_rtsp_scan(
     )
 
     return True
+
+def _build_rtsp_failure_hint(args: argparse.Namespace) -> str:
+    """
+    Build a short, actionable hint after an RTSP failure.
+    """
+    if args.connection_string:
+        return (
+            "Check that the user-provided connection string is correct, or try a different "
+            "RTSP path / vendor profile."
+        )
+
+    if args.vendor:
+        return (
+            "Try running the tool again without --vendor, or specify a different vendor "
+            "if the target does not match the selected RTSP profile."
+        )
+
+    if args.multi_channel:
+        return (
+            "Try a different multi-channel RTSP connection string, or rerun without "
+            "--multi-channel if the target also exposes a generic stream path."
+        )
+
+    return (
+        "Try specifying --vendor or --connection-string, or rerun the tool with different "
+        "credentials if you already know them."
+    )
 
 def _should_offer_exhaustive_rtsp_scan(
     args: argparse.Namespace,
@@ -1849,23 +2406,64 @@ def _warn_before_rtsp_stream(
             "If the stream still does not work, you can try rebooting the camera with --reboot"
         )
 
-def _resolve_recording_path(filename: str | None) -> Path:
+def _resolve_media_output_path(
+    filename: str | None,
+    *,
+    base_dir: Path,
+    target: str,
+    prefix: str,
+    suffix: str,
+) -> Path:
     """
-    Resolve the recording output path.
+    Resolve a media output path using the tool runtime directories.
     """
     if not filename:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        path = RECORDINGS_DIR / f"recording_{timestamp}.mp4"
-        return path
+        target_dir = base_dir / _sanitize_target_for_path(target)
+        return target_dir / f"{timestamp}{suffix}"
 
     path = Path(filename).expanduser()
     if not path.is_absolute():
-        path = RECORDINGS_DIR / path
+        path = base_dir / path
 
     if path.suffix == "":
-        path = path.with_suffix(".mp4")
+        path = path.with_suffix(suffix)
 
     return path
+
+def _sanitize_target_for_path(target: str) -> str:
+    """
+    Sanitize a target string so it can be safely used as a directory name.
+    """
+    sanitized = "".join(
+        character if character.isalnum() or character in {"-", "_", "."} else "_"
+        for character in target.strip()
+    )
+    return sanitized.strip("._") or "unknown_target"
+
+def _resolve_recording_path(filename: str | None, target: str) -> Path:
+    """
+    Resolve the recording output path.
+    """
+    return _resolve_media_output_path(
+        filename,
+        base_dir=RECORDINGS_DIR,
+        target=target,
+        prefix="recording",
+        suffix=".mp4",
+    )
+
+def _resolve_snapshot_path(filename: str | None, target: str) -> Path:
+    """
+    Resolve the snapshot output path.
+    """
+    return _resolve_media_output_path(
+        filename,
+        base_dir=SNAPSHOTS_DIR,
+        target=target,
+        prefix="snapshot",
+        suffix=".jpg",
+    )
 
 def _build_ffmpeg_capture_cmd(
     attempt: RtspAttempt,
@@ -2056,6 +2654,35 @@ def _start_ffmpeg_capture(
         stderr_path,
     )
 
+def _build_ffmpeg_snapshot_cmd(
+    attempt: RtspAttempt,
+    output_path: Path,
+) -> list[str]:
+    """
+    Build the ffmpeg command used to capture a single snapshot from an RTSP stream.
+    """
+    return [
+        "ffmpeg",
+        "-nostats",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-rtsp_transport",
+        attempt.protocol,
+        "-timeout",
+        "10000000",
+        "-i",
+        attempt.url,
+        "-map",
+        "0:v:0",
+        "-frames:v",
+        "1",
+        "-q:v",
+        "2",
+        "-y",
+        str(output_path),
+    ]
+
 def _finalize_recording_to_mp4(
     temp_path: Path,
     output_path: Path,
@@ -2118,11 +2745,47 @@ def _report_saved_recording(output_path: Path, tui: TUI) -> None:
         size=size_mb,
     )
 
+def _capture_rtsp_snapshot(attempt: RtspAttempt, args: argparse.Namespace, tui: TUI) -> None:
+    """
+    Capture a single snapshot from a valid RTSP stream using ffmpeg.
+    """
+    output_path = _resolve_snapshot_path(args.snapshot, args.target)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    tui.info("Saving RTSP snapshot to {path}", path=output_path)
+
+    stderr_path: Path | None = None
+
+    try:
+        stderr_path = Path(tempfile.mkstemp(prefix="pwneye-ffmpeg-snapshot-", suffix=".log")[1])
+
+        with stderr_path.open("w", encoding="utf-8") as stderr_handle:
+            result = subprocess.run(
+                _build_ffmpeg_snapshot_cmd(attempt, output_path),
+                stdout=subprocess.DEVNULL,
+                stderr=stderr_handle,
+            )
+
+        if result.returncode == 0 and output_path.exists() and output_path.stat().st_size > 0:
+            tui.success("Snapshot saved to {path}", path=output_path)
+            return
+
+        error_detail = _read_process_error(stderr_path) or _read_process_log(stderr_path)
+        if error_detail:
+            tui.error("Unable to capture the RTSP snapshot with ffmpeg ({detail})", detail=error_detail)
+        else:
+            tui.error("Unable to capture the RTSP snapshot with ffmpeg")
+    except OSError:
+        tui.error("Unable to capture the RTSP snapshot with ffmpeg")
+    finally:
+        if stderr_path is not None:
+            stderr_path.unlink(missing_ok=True)
+
 def _record_rtsp_stream(attempt: RtspAttempt, args: argparse.Namespace, tui: TUI) -> None:
     """
     Record a valid RTSP stream to disk using ffmpeg.
     """
-    output_path = _resolve_recording_path(args.record)
+    output_path = _resolve_recording_path(args.record, args.target)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = _build_temp_recording_path(output_path)
 
@@ -2151,6 +2814,8 @@ def _record_rtsp_stream(attempt: RtspAttempt, args: argparse.Namespace, tui: TUI
                 tui.error("Unable to record the RTSP stream with ffmpeg")
 
     except KeyboardInterrupt:
+        tui.console.file.write("\r\033[2K")
+        tui.console.file.flush()
         exit_code = _stop_ffmpeg_recording(recorder)
         if exit_code in (0, 255, None) or (temp_path.exists() and temp_path.stat().st_size > 0):
             finalize_error = _finalize_recording_to_mp4(temp_path, output_path, tui)
@@ -2166,7 +2831,13 @@ def _record_rtsp_stream(attempt: RtspAttempt, args: argparse.Namespace, tui: TUI
             stderr_path.unlink(missing_ok=True)
         temp_path.unlink(missing_ok=True)
 
-def _play_rtsp_stream(attempt: RtspAttempt, args: argparse.Namespace, tui: TUI) -> None:
+def _play_rtsp_stream(
+    attempt: RtspAttempt,
+    args: argparse.Namespace,
+    tui: TUI,
+    *,
+    detach: bool = True,
+) -> None:
     """
     Open a valid RTSP stream with ffplay for live preview.
     """
@@ -2175,19 +2846,105 @@ def _play_rtsp_stream(attempt: RtspAttempt, args: argparse.Namespace, tui: TUI) 
     tui.info("Opening live preview with ffplay...")
 
     try:
-        player = subprocess.Popen(
+        if detach:
+            player = subprocess.Popen(
+                cmd,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+
+            time.sleep(1.0)
+            if player.poll() is not None:
+                tui.error("Unable to open the RTSP stream with ffplay")
+            return
+
+        subprocess.run(
             cmd,
-            stdin=subprocess.DEVNULL,
+            check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            start_new_session=True,
         )
-
-        time.sleep(1.0)
-        if player.poll() is not None:
-            tui.error("Unable to open the RTSP stream with ffplay")
+    except KeyboardInterrupt:
+        tui.console.file.write("\r\033[2K")
+        tui.console.file.flush()
     except OSError:
         tui.error("Unable to open the RTSP stream with ffplay")
+    except subprocess.CalledProcessError:
+        tui.error("Unable to open the RTSP stream with ffplay")
+
+def _run_multichannel_preview_session(
+    selected_attempt: RtspAttempt,
+    channels: list[RtspChannelEntry],
+    args: argparse.Namespace,
+    tui: TUI,
+) -> None:
+    """
+    Keep the tool alive while the user opens multiple discovered RTSP channels.
+    """
+    _play_rtsp_stream(
+        selected_attempt,
+        args,
+        tui,
+        detach=True,
+    )
+
+    while True:
+        current_attempt = tui.select_channel(
+            channels,
+            prompt=RTSP_CHANNEL_SELECT_PROMPT,
+        ).attempt
+        _play_rtsp_stream(
+            current_attempt,
+            args,
+            tui,
+            detach=True,
+        )
+
+def _run_multichannel_snapshot_preview_session(
+    selected_attempt: RtspAttempt,
+    channels: list[RtspChannelEntry],
+    args: argparse.Namespace,
+    tui: TUI,
+) -> None:
+    """
+    Keep the tool alive while the user captures snapshots and opens previews
+    from multiple discovered RTSP channels.
+    """
+    current_attempt = selected_attempt
+
+    while True:
+        _capture_rtsp_snapshot(current_attempt, args, tui)
+        _play_rtsp_stream(
+            current_attempt,
+            args,
+            tui,
+            detach=True,
+        )
+        current_attempt = tui.select_channel(
+            channels,
+            prompt=RTSP_CHANNEL_SELECT_PROMPT,
+        ).attempt
+
+def _run_multichannel_snapshot_session(
+    selected_attempt: RtspAttempt,
+    channels: list[RtspChannelEntry],
+    args: argparse.Namespace,
+    tui: TUI,
+) -> None:
+    """
+    Keep the tool alive while the user captures snapshots from multiple
+    discovered RTSP channels without opening live preview.
+    """
+    current_attempt = selected_attempt
+
+    while True:
+        _capture_rtsp_snapshot(current_attempt, args, tui)
+        current_attempt = tui.select_channel(
+            channels,
+            prompt=RTSP_CHANNEL_SELECT_PROMPT,
+        ).attempt
 
 def _preview_and_record_rtsp_stream(
     attempt: RtspAttempt,
@@ -2197,7 +2954,7 @@ def _preview_and_record_rtsp_stream(
     """
     Open the live preview while recording the RTSP stream in background.
     """
-    output_path = _resolve_recording_path(args.record)
+    output_path = _resolve_recording_path(args.record, args.target)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temp_path = _build_temp_recording_path(output_path)
     ffplay_cmd = _build_ffplay_cmd(attempt)
@@ -2237,6 +2994,8 @@ def _preview_and_record_rtsp_stream(
                 tui.error("The background recording ended unexpectedly")
 
     except KeyboardInterrupt:
+        tui.console.file.write("\r\033[2K")
+        tui.console.file.flush()
         exit_code = _stop_ffmpeg_recording(recorder)
         if exit_code in (0, 255, None) or (temp_path.exists() and temp_path.stat().st_size > 0):
             finalize_error = _finalize_recording_to_mp4(temp_path, output_path, tui)
@@ -2270,12 +3029,52 @@ def _handle_rtsp_stream(
         onvif_credentials=onvif_credentials,
     )
 
+    attempt, discovered_channels = _maybe_select_rtsp_channel(attempt, args, tui)
+
+    if args.no_video and args.record is None and args.snapshot is None:
+        tui.info("Skipping live preview due to --no-video")
+        return
+
     if args.record is not None and args.no_video:
         _record_rtsp_stream(attempt, args, tui)
         return
 
     if args.record is not None and not args.no_video:
         _preview_and_record_rtsp_stream(attempt, args, tui)
+        return
+
+    if args.snapshot is not None and args.no_video:
+        if discovered_channels and len(discovered_channels) > 1:
+            _run_multichannel_snapshot_session(
+                attempt,
+                discovered_channels,
+                args,
+                tui,
+            )
+            return
+        _capture_rtsp_snapshot(attempt, args, tui)
+        return
+
+    if args.snapshot is not None and not args.no_video:
+        if discovered_channels and len(discovered_channels) > 1:
+            _run_multichannel_snapshot_preview_session(
+                attempt,
+                discovered_channels,
+                args,
+                tui,
+            )
+            return
+        _capture_rtsp_snapshot(attempt, args, tui)
+        _play_rtsp_stream(attempt, args, tui)
+        return
+
+    if discovered_channels and len(discovered_channels) > 1:
+        _run_multichannel_preview_session(
+            attempt,
+            discovered_channels,
+            args,
+            tui,
+        )
         return
 
     _play_rtsp_stream(attempt, args, tui)

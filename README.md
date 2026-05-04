@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.2-red" alt="version 1.0.2">
+  <img src="https://img.shields.io/badge/version-1.1.0-red" alt="version 1.1.0">
   <img src="https://img.shields.io/badge/codename-panopticon-black" alt="codename panopticon">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey" alt="macOS and Linux">
@@ -20,9 +20,10 @@ Some of the capabilities currently supported include:
 - ONVIF post-auth enumeration of device information, configured users, network configuration, media profiles, and RTSP stream URIs
 - ONVIF reboot support with `--reboot`
 - RTSP port detection and banner-based vendor identification
-- Vendor-aware RTSP bruteforce with exhaustive fallback when needed
+- Vendor-aware RTSP bruteforce with manual vendor and manual connection string support
 - Multithreaded RTSP bruteforce with live progress output
-- RTSP stream validation, preview via `ffplay`, and recording via `ffmpeg`
+- RTSP multi-channel handling with automatic detection, guided enumeration, and interactive channel selection
+- RTSP stream validation, live preview via `ffplay`, recording via `ffmpeg`, and snapshot capture
 - Per-target caching of successful ONVIF and RTSP findings under `~/.pwneye`
 
 ## Demo
@@ -37,13 +38,17 @@ https://github.com/user-attachments/assets/6913632b-326d-455e-aa0d-be6bf9b3e66c
   - [External Dependencies](#external-dependencies)
 - [Getting Started](#getting-started)
 - [ONVIF](#onvif)
+  - [What ONVIF Gives You](#what-onvif-gives-you)
   - [Enumerating the Local Network](#enumerating-the-local-network)
   - [Bruteforcing Credentials](#bruteforcing-credentials)
   - [Rebooting a Camera](#rebooting-a-camera)
 - [RTSP](#rtsp)
+  - [What RTSP Gives You](#what-rtsp-gives-you)
   - [Identifying the Vendor](#identifying-the-vendor)
   - [RTSP Bruteforce](#rtsp-bruteforce)
-  - [Streaming and Recording](#streaming-and-recording)
+  - [Multi-Channel Streams](#multi-channel-streams)
+  - [Streaming, Recording, and Snapshots](#streaming-recording-and-snapshots)
+- [Tips & Tricks](#tips--tricks)
 - [TODO](#todo)
 - [Acknowledgements](#acknowledgements)
 - [Safety](#safety)
@@ -60,6 +65,13 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python3 pwneye.py --help
+```
+
+Upgrade it later from the same GitHub source:
+
+```bash
+cd pwneye
+git pull
 ```
 
 ### pipx
@@ -100,30 +112,52 @@ The following tools are expected in `PATH` depending on the mode you use:
 
 ## Getting Started
 
-`pwneye` can be used in different ways depending on what you already know about the target. The examples below are meant to show the fastest way to get value out of the tool, not a single mandatory workflow.
+Use these as the fastest entry points into the tool. The goal here is not to document every flag, but to show the most useful ways to start working with a camera depending on what you already know.
 
-Run the default ONVIF + RTSP flow against a single target:
+Start from the default full workflow when you have a single target and want `pwneye` to do the protocol selection work for you:
 
 ```bash
 pwneye -t 192.168.1.135
 ```
 
-Discover ONVIF-capable devices on the local network:
+Start from ONVIF discovery when you are on the same local network and want to identify devices, vendors, and stream clues before touching RTSP:
 
 ```bash
 pwneye --discover
 ```
 
-Use fixed RTSP credentials or wordlists:
+Start directly from RTSP when ONVIF is irrelevant, unavailable, or you already know what you want to test:
 
+```bash
+pwneye -t 192.168.1.135 --skip-onvif
 ```
+
+Start from known or suspected credentials when you want to reduce noise and validate access quickly:
+
+```bash
 pwneye -t 192.168.1.135 --username admin --password admin
 pwneye -t 192.168.1.135 --username admin --password ~/wordlists/passwords.txt
 pwneye -t 192.168.1.135 --username ~/wordlists/users.txt --password admin123
 ```
 
-Useful flags to keep in mind from the start:
+Start from a known path or a path template when you already have a stream clue and want tight control over RTSP requests:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif -cn "/live/ch00_0"
+pwneye -t 192.168.1.135 --skip-onvif -cn '/cam/realmonitor?channel={channel}&subtype=0'
+```
+
+Start from evidence collection once a working stream is found:
+
+```bash
+pwneye -t 192.168.1.135 --snapshot
+pwneye -t 192.168.1.135 --record
+```
+
+Useful flags to keep in mind:
 - `--vendor VENDOR`: reduce RTSP requests when the device family is already known
+- `-cn, --connection-string PATH`: try a known RTSP path or a file containing candidate paths
+- `--multi-channel`: prefer channel-based RTSP paths when you suspect a DVR/NVR-style target
 - `--threads N`: control concurrency for ONVIF and RTSP bruteforce
 - `--skip-onvif` / `--skip-rtsp`: focus on one protocol only
 - `--no-cache`: do not read from or write to cache
@@ -134,6 +168,17 @@ Useful flags to keep in mind from the start:
 ONVIF is the management and control side of the camera world. In practice, it is useful for discovery, authentication, metadata extraction, media profile enumeration, stream URI retrieval, and device actions such as rebooting.
 
 In `pwneye`, ONVIF is the protocol that usually gives the richest post-auth context and the cleanest path to understanding what a camera exposes.
+
+### What ONVIF Gives You
+
+When a camera exposes ONVIF, `pwneye` can use it to:
+
+- discover cameras on the local network via WS-Discovery
+- test ONVIF authentication using fixed credentials or files
+- extract manufacturer and device metadata
+- retrieve RTSP stream URIs exposed by the device
+- enumerate useful post-auth context before touching RTSP more aggressively
+- request an authenticated reboot with `--reboot`
 
 ### Enumerating the Local Network
 
@@ -182,7 +227,6 @@ pwneye -t 192.168.1.135 -ou admin -op ~/wordlists/rockyou-short.txt --skip-rtsp 
 [info] Trying ONVIF authentication using common username(s) and password(s)...
 [success] 192.168.1.135 supports ONVIF on port 80
 ⠼ Trying ONVIF on 192.168.1.135:80 with camera:12345
-
 ```
 
 Useful options:
@@ -190,6 +234,8 @@ Useful options:
 - `-oP, --onvif-port PORT`: test a specific ONVIF port
 - `-ou, --onvif-username USER`: ONVIF username or file with one username per line
 - `-op, --onvif-password PASS`: ONVIF password or file with one password per line
+
+If `-ou` and `-op` are not specified, `pwneye` automatically falls back to its built-in common ONVIF usernames and passwords.
 
 `pwneye` caches successful ONVIF credentials per target under `~/.pwneye/cache` and reuses them on future runs unless you use `--fresh` or `--no-cache`.
 
@@ -211,9 +257,10 @@ pwneye -t 192.168.1.135 --reboot
    ONVIF Username: admin
    ONVIF Password: Hackerest1
 
-[info] Using previously cached ONVIF credentials
 [warning] Requesting ONVIF system reboot...
-[success] ONVIF reboot request accepted. The camera is rebooting.
+[info] ONVIF reboot request sent
+[info] Checking if the camera is still reachable...
+[success] The device has been rebooted!
 ```
 
 When `--reboot` is used, RTSP probing is skipped.
@@ -223,6 +270,17 @@ When `--reboot` is used, RTSP probing is skipped.
 RTSP is the streaming side of the camera world. It is the protocol that usually gives you the live video path, but it is also the most fragmented one: vendors use different paths, channel conventions, authentication quirks, and banner formats.
 
 In `pwneye`, RTSP handling is built around port discovery, banner grabbing, vendor-aware path selection, bruteforce orchestration, stream validation, preview, and recording.
+
+### What RTSP Gives You
+
+RTSP is the part of the workflow that confirms whether you can really access a stream. In `pwneye`, that means:
+
+- detecting RTSP on common or user-specified ports
+- grabbing banners and trying to identify the vendor automatically
+- bruteforcing credentials against vendor-aware or user-provided paths
+- validating working streams before opening them
+- recording streams or capturing snapshots for evidence
+- enumerating multiple channels when the target behaves like a DVR or NVR
 
 ### Identifying the Vendor
 
@@ -266,10 +324,39 @@ Rotate only usernames with a fixed password:
 pwneye -t 192.168.1.135 --password 'SuperSecretPass' --vendor hikvision --threads 10
 ```
 
+Try a single user-provided RTSP connection string:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif -cn "/11"
+pwneye -t 192.168.1.135 --skip-onvif -cn "/cam/realmonitor?channel=1&subtype=0"
+```
+
+Load candidate connection strings from file:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif -cn paths.txt
+```
+
+Combine a manual path with fixed credentials:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif -u admin -p admin -cn "/live/ch00_0"
+```
+
+Prefer multi-channel paths when the target is likely a DVR/NVR:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif --multi-channel
+```
+
 Useful options:
 - `-u, --username USER`: RTSP username or file with one username per line
 - `-p, --password PASS`: RTSP password or file with one password per line
+- `-cn, --connection-string PATH`: RTSP connection string or file with one connection string per line
+- `--multi-channel`: prefer RTSP multi-channel connection strings when available
 - `--threads N`: number of concurrent threads used by the bruteforce engine
+
+If `-u` and `-p` are not specified, `pwneye` automatically falls back to its built-in common RTSP usernames and passwords.
 
 `pwneye` caches successful RTSP credentials and validated stream metadata per target under `~/.pwneye/cache`.
 
@@ -278,7 +365,46 @@ Cache behavior:
 - `--fresh`: ignore cached results but still update cache with new findings
 - `--no-cache`: disable both cache reads and cache writes
 
-### Streaming and Recording
+### Multi-Channel Streams
+
+Some cameras, DVRs, and NVRs expose multiple logical RTSP channels instead of a single static path. Typical examples include templates such as:
+
+```text
+rtsp://IP:554/?chID=1&streamType=main&linkType=tcp
+rtsp://IP:554/cam/realmonitor?channel=1&subtype=0
+```
+
+`pwneye` can detect this automatically while probing RTSP, but you can also steer the process explicitly:
+
+- `--multi-channel` tells `pwneye` to prefer channel-based RTSP paths from the knowledge base
+- `--connection-string` lets you provide your own channel template, including placeholders such as `{channel}`
+- the same template logic also works when the connection strings come from file
+
+Examples:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif --multi-channel
+pwneye -t 192.168.1.135 --skip-onvif -cn '/cam/realmonitor?channel={channel}&subtype=0'
+pwneye -t 192.168.1.135 --skip-onvif -cn channel_paths.txt
+```
+
+Sample output:
+
+```text
+[info] Enumerating RTSP channels using the validated connection template...
+[info] Press CTRL-C to stop channel enumeration and choose from the channels found
+[success] RTSP channel 2 is valid
+[success] RTSP channel 3 is valid
+[warning] RTSP channel enumeration interrupted by user. Using the channels discovered so far
+
+   [1] Channel 1: rtsp://203.0.113.77:554/cam/realmonitor?channel=1&subtype=0
+   [2] Channel 2: rtsp://203.0.113.77:554/cam/realmonitor?channel=2&subtype=0
+   [3] Channel 3: rtsp://203.0.113.77:554/cam/realmonitor?channel=3&subtype=0
+
+[>] Select channel (CTRL-C to exit):
+```
+
+### Streaming, Recording, and Snapshots
 
 Open a validated stream with live preview:
 
@@ -293,33 +419,51 @@ pwneye -t 192.168.1.135 --record
 pwneye -t 192.168.1.135 --record living-room.mp4
 ```
 
+Capture a snapshot instead of a full recording:
+
+```bash
+pwneye -t 192.168.1.135 --snapshot
+pwneye -t 192.168.1.135 --snapshot living-room.jpg
+```
+
 Record without opening the preview window:
 
 ```
 pwneye -t 192.168.1.135 --record living-room.mp4 --no-video
 
 ...
-[info] Recording RTSP stream to /Users/user/.pwneye/recordings/recording_2026-04-14_20-25-03.mp4
+[info] Recording RTSP stream to /Users/user/.pwneye/recordings/192.168.1.135/2026-04-14_20-25-03.mp4
 [info] Press CTRL-C to stop the recording
 [warning] Retrying MP4 finalization in compatibility mode (transcoding)...
-[success] Recording saved to /Users/user/.pwneye/recordings/recording_2026-04-14_20-25-03.mp4 (5.75 MB)
+[success] Recording saved to /Users/user/.pwneye/recordings/192.168.1.135/2026-04-14_20-25-03.mp4 (5.75 MB)
 ```
 
 Recording behavior:
 - `--record [OUTPUT.mp4]`: record the validated RTSP stream; if omitted, a timestamped file is created under `~/.pwneye/recordings`
+- `--snapshot [OUTPUT.jpg]`: save a still frame from the validated RTSP stream; if omitted, a timestamped file is created under `~/.pwneye/snapshots`
 - `--no-video`: skip live preview and decoding
-- default recordings are stored under `~/.pwneye/recordings`
+- default recordings are stored under `~/.pwneye/recordings/<target>/`
+- default snapshots are stored under `~/.pwneye/snapshots/<target>/`
+
+## Tips & Tricks
+
+If `pwneye` were a video game, these are probably the tips you would see on the loading screen:
+
+- **A strong web UI doesn't mean a secure camera:** A camera with a well-protected web interface is not necessarily well protected overall. It is common to find solid web lockout behavior while RTSP remains unauthenticated or accepts effectively unlimited attempts.
+- **Use discovery when you can:** If `--discover` works on the local network, use it first. Vendor information, device metadata, and cached findings can make later RTSP work much quieter and more reliable.
+- **ONVIF first can be the smarter move:** ONVIF and RTSP often share the same credentials. If ONVIF is exposed, it is usually smarter to bruteforce that side first with `--skip-rtsp` instead of hammering RTSP directly and making the stream unstable. When `pwneye` finds valid ONVIF credentials, it will try to reuse them on RTSP automatically.
+- **Known vendors reduce noise:** If you already know the vendor, pass `--vendor` explicitly. It reduces requests and can help keep fragile targets stable.
+- **Known paths beat blind guessing:** If you already know or suspect the path, use `--connection-string` instead of broad RTSP enumeration. It gives you tighter control over the request set and makes failures easier to interpret.
+- **A recorder may expose more than one feed:** If a target looks like a DVR/NVR, try `--multi-channel` or a manual channel template before assuming it only exposes a single stream.
+- **Reboot can be a recovery step:** If you have valid RTSP credentials but still cannot open the video, the stream may simply be unstable after repeated probing. If you also have ONVIF access, a blunt but often effective recovery step is `--reboot`.
+- **A valid stream is not always a meaningful one:** Some devices will happily return a stream even for incorrect paths and incorrect channel IDs. Treat broad channel success as a hint until you confirm that the resulting feed is actually different.
 
 ## TODO
 
-- [ ] Add `--snapshot` support to capture a still frame from a validated RTSP stream
-- [ ] Allow `--target` to accept a full RTSP connection string, so ONVIF discovery can be skipped and credential testing can run directly against a known stream path
-- [ ] Add `--connection-strings` / `-cs` to manually provide one or more RTSP connection strings during testing
 - [ ] Add SOCKS proxy support so `pwneye` can operate through a bridge or pivot host that can reach cameras on its own local network
 - [ ] Allow `--target` to accept a file with multiple IPs/hosts so scans can be parallelized across targets
-- [ ] Add support for multi-channel cameras
-- [ ] Check for new versions automatically at startup and notify the user when an update is available
 - [ ] Improve the RTSP database by expanding and refining vendor banner fingerprints
+- [ ] Create a comprehensive WIKI
 
 ## Acknowledgements
 

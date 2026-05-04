@@ -1,5 +1,5 @@
 import argparse
-from rich_argparse import RichHelpFormatter, ArgumentDefaultsRichHelpFormatter
+from rich_argparse import RichHelpFormatter
 
 from pwneye.core.utils.validators import validate_ip_or_domain, validate_port
 
@@ -31,7 +31,14 @@ class PwneyeArgumentParser(argparse.ArgumentParser):
         print()
         super().exit(status)
 
-class PwneyeHelpFormatter(ArgumentDefaultsRichHelpFormatter):
+class PwneyeHelpFormatter(RichHelpFormatter):
+    @staticmethod
+    def group_name_formatter(group_name: str) -> str:
+        formatted = group_name.title()
+        formatted = formatted.replace("Onvif", "ONVIF")
+        formatted = formatted.replace("Rtsp", "RTSP")
+        return formatted
+
     def __init__(self, *args, **kwargs):
         kwargs["max_help_position"] = 40
         kwargs["width"] = 130
@@ -78,7 +85,7 @@ def parse_args(logger) -> argparse.Namespace:
 
     # ONVIF options
 
-    onvif = parser.add_argument_group("ONVIF (optional)")
+    onvif = parser.add_argument_group("ONVIF (Optional)")
     onvif.add_argument(
         "--skip-onvif",
         action="store_true",
@@ -94,13 +101,13 @@ def parse_args(logger) -> argparse.Namespace:
         "-ou", "--onvif-username",
         metavar="USER",
         default="",
-        help="ONVIF username or file with one username per line",
+        help="ONVIF username or file with one username per line (otherwise common usernames are used)",
     )
     onvif.add_argument(
         "-op", "--onvif-password",
         metavar="PASS",
         default="",
-        help="ONVIF password or file with one password per line",
+        help="ONVIF password or file with one password per line (otherwise common passwords are used)",
     )
     onvif.add_argument(
         "--reboot",
@@ -109,7 +116,7 @@ def parse_args(logger) -> argparse.Namespace:
     )
     # RTSP options
 
-    rtsp = parser.add_argument_group("RTSP (optional)")
+    rtsp = parser.add_argument_group("RTSP (Optional)")
     rtsp.add_argument(
         "--skip-rtsp",
         action="store_true",
@@ -123,37 +130,43 @@ def parse_args(logger) -> argparse.Namespace:
         ),
         default=None,
         metavar="PORT",
-        help="RTSP port",
+        help="RTSP port (if not specified, common RTSP ports are tested)",
     )
     rtsp.add_argument(
         "-u", "--username",
         default="",
         metavar="USER",
-        help="RTSP username or file with one username per line",
+        help="RTSP username or file with one username per line (otherwise common usernames are used)",
     )
     rtsp.add_argument(
         "-p", "--password",
         default="",
         metavar="PASS",
-        help="RTSP password or file with one password per line",
+        help="RTSP password or file with one password per line (otherwise common passwords are used)",
+    )
+    rtsp.add_argument(
+        "-cn", "--connection-string",
+        default="",
+        metavar="PATH",
+        help="RTSP connection string or file with one connection string per line",
     )
     rtsp.add_argument(
         "--protocol",
         choices=["tcp", "udp"],
         default="tcp",
-        help="Transport protocol for RTSP connections",
+        help="Transport protocol for RTSP connections (default: tcp)",
     )
     rtsp.add_argument(
         "--timeout",
         type=int,
         default=10,
         metavar="SECONDS",
-        help="RTSP connection timeout",
+        help="RTSP connection timeout (default: 10)",
     )
     rtsp.add_argument(
         "--vendor",
         metavar="VENDOR",
-        help="Specify the vendor manually (e.g. hikvision)",
+        help="Specify the RTSP vendor manually (otherwise automatic identification is attempted)",
     )
     rtsp.add_argument(
         "--banner",
@@ -161,12 +174,25 @@ def parse_args(logger) -> argparse.Namespace:
         help="Fetch the RTSP banner and exit",
     )
     rtsp.add_argument(
+        "--multi-channel",
+        action="store_true",
+        help="Prefer RTSP multi-channel connection strings when available",
+    )
+    rtsp.add_argument(
         "--record",
         nargs="?",
         const="",
         default=None,
-        metavar="OUTPUT.mp4",
-        help="Record the RTSP stream to OUTPUT.mp4 (or auto-generate a timestamped filename)",
+        metavar="FILENAME.mp4",
+        help="Record the RTSP stream to FILENAME.mp4 (or auto-generate a timestamped filename)",
+    )
+    rtsp.add_argument(
+        "--snapshot",
+        nargs="?",
+        const="",
+        default=None,
+        metavar="FILENAME.jpg",
+        help="Save an RTSP snapshot to FILENAME.jpg (or auto-generate a timestamped filename)",
     )
     rtsp.add_argument(
         "--no-video",
@@ -199,10 +225,18 @@ def parse_args(logger) -> argparse.Namespace:
         action="store_true",
         help="List supported RTSP vendors and exit",
     )
+    misc.add_argument(
+        "--check-updates",
+        action="store_true",
+        help="Check whether a newer pwneye release is available and exit",
+    )
 
     args = parser.parse_args()
 
-    if not (args.target or args.discover or args.list_vendors):
+    if not (args.target or args.discover or args.list_vendors or args.check_updates):
         parser.error("one of --target or --discover is required")
+
+    if args.record is not None and args.snapshot is not None:
+        parser.error("--record and --snapshot cannot be used together")
 
     return args

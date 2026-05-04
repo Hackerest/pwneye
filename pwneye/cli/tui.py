@@ -7,7 +7,7 @@ from rich.text import Text
 from rich.markup import escape
 
 from pwneye.config import DEVELOPER, VERSION, CODENAME, REPO
-from pwneye.core.types import PromptInterrupt
+from pwneye.core.types import PromptInterrupt, RtspChannelEntry
 
 def print_banner(console: Console) -> None:
     """
@@ -146,6 +146,13 @@ class TUI:
             end=end,
             **kwargs,
         )
+
+    def motd(self, message: str, end: str = "", **kwargs) -> None:
+        with self._lock:
+            formatted = self._format_message(message, **kwargs)
+            self.console.print(
+                f"[bold][[bold magenta]MOTD[/bold magenta]][/bold] [italic grey62]{formatted}[/italic grey62]{end}"
+            )
 
     # ------------------------------------------------------------------
     # Blocks & prompts
@@ -317,4 +324,49 @@ class TUI:
             except ValueError:
                 self.warning(
                     f"Invalid choice. Select a number between 1 and {len(items)}"
+                )
+
+    def select_channel(
+        self,
+        channels: list[RtspChannelEntry],
+        prompt: str = "Select channel",
+        indent: int = 3,
+    ) -> RtspChannelEntry:
+        """
+        Display discovered RTSP channels and let the user choose one.
+        """
+        if not channels:
+            raise ValueError("No channels to select from")
+
+        prefix = " " * indent
+        self.console.print()
+
+        for idx, entry in enumerate(channels, start=1):
+            self.console.print(
+                f"{prefix}[[cyan]{idx}[/cyan]] Channel [grey70]{entry.channel}[/grey70]: [grey70]{entry.attempt.url}[/]"
+            )
+
+        self.console.print()
+
+        while True:
+            try:
+                self.console.print(f"[[cyan]>[/]] {prompt}: ", end="")
+                choice = input().strip()
+
+                if not choice.isdigit():
+                    raise ValueError
+
+                index = int(choice)
+                if not 1 <= index <= len(channels):
+                    raise ValueError
+
+                return channels[index - 1]
+
+            except KeyboardInterrupt:
+                self.interrupted()
+                raise PromptInterrupt from None
+
+            except ValueError:
+                self.warning(
+                    f"Invalid choice. Select a number between 1 and {len(channels)}"
                 )

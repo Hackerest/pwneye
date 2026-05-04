@@ -3,7 +3,7 @@ from pathlib import Path
 
 from typing import List, Tuple, Optional
 
-from pwneye.config import PWNEYE_DIR, CACHE_DIR, RECORDINGS_DIR
+from pwneye.config import PWNEYE_DIR, CACHE_DIR, RECORDINGS_DIR, SNAPSHOTS_DIR
 
 def is_first_run() -> bool:
     """
@@ -30,6 +30,7 @@ def ensure_runtime_dirs() -> tuple[
     Optional[Path],
     Optional[Path],
     Optional[Path],
+    Optional[Path],
 ]:
     """
     Ensure runtime directories exist.
@@ -38,12 +39,14 @@ def ensure_runtime_dirs() -> tuple[
         (
             pwneye_path_if_created,
             cache_path_if_created,
-            recordings_path_if_created
+            recordings_path_if_created,
+            snapshots_path_if_created,
         )
     """
     pwneye_created = None
     cache_created = None
     recordings_created = None
+    snapshots_created = None
 
     if not PWNEYE_DIR.exists():
         PWNEYE_DIR.mkdir(parents=True, exist_ok=True)
@@ -57,4 +60,8 @@ def ensure_runtime_dirs() -> tuple[
         RECORDINGS_DIR.mkdir(parents=True, exist_ok=True)
         recordings_created = RECORDINGS_DIR
 
-    return pwneye_created, cache_created, recordings_created
+    if not SNAPSHOTS_DIR.exists():
+        SNAPSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+        snapshots_created = SNAPSHOTS_DIR
+
+    return pwneye_created, cache_created, recordings_created, snapshots_created
