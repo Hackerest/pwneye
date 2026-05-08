@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="pwneye logo" width="500">
+  <img src="assets/logo.png" alt="pwneye logo">
 </p>
 
 <p align="center">
