@@ -64,12 +64,24 @@ ports:
 - 65152
 common_paths:
 - /
+- /1
+- /1/stream1
+- /1/1:1/main
+- /1.AMP
+- /1/cif
 - /11
+- /12
+- /4
 - /live
 - /live.sdp
+- /wmt-13969.sdp
 - /h264_stream
 - /stream1
 - /Streaming/Channels/101
+- /mjpeg
+- /mjpeg1
+- /sub1
+- /ch01
 common_creds:
   usernames:
   - ''
