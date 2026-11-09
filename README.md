@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.3.2-red" alt="version 1.3.2">
+  <img src="https://img.shields.io/badge/version-1.4.0-red" alt="version 1.4.0">
   <img src="https://img.shields.io/badge/codename-panopticon-black" alt="codename panopticon">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey" alt="macOS and Linux">
@@ -77,11 +77,28 @@ Uninstall it:
 pipx uninstall pwneye
 ```
 
-Upgrade it later from the same GitHub source:
+Update `pwneye` directly from the tool:
 
 ```bash
-pipx upgrade pwneye
+pwneye --update
 ```
+
+Example output with illustrative versions:
+
+```text
+[info] Checking for updates...
+[warning] You are running version 1.4.0, but version 1.4.1 is available (https://github.com/hackerest/pwneye/releases)
+[info] Updating pwneye via pipx...
+[success] pwneye updated from 1.4.0 to 1.4.1
+```
+
+`--update` checks for a newer release before upgrading the pipx installation
+currently running. If you are already on the latest version, it says so and
+exits. If an update is available and you run pwneye from a clone
+or another installation method, it prints a warning and links back to these
+instructions. `--check-updates` only checks for releases.
+
+You can also update directly with `pipx upgrade pwneye`.
 
 ### Python
 
@@ -148,6 +165,16 @@ pwneye -t 192.168.1.135 --username admin --password ~/wordlists/passwords.txt
 pwneye -t 192.168.1.135 --username ~/wordlists/users.txt --password admin123
 ```
 
+Omitting a credential option allows pwneye to select credentials from its normal sources (including the knowledge base). Passing `''` explicitly fixes that field to an empty value instead:
+
+```bash
+pwneye -t 192.168.1.135 --skip-onvif -u admin -p ''
+pwneye -t 192.168.1.135 --skip-onvif -u '' -p ''
+pwneye -t 192.168.1.135 --skip-rtsp -ou admin -op ''
+```
+
+This applies to both RTSP (`-u`, `-p`) and ONVIF (`-ou`, `-op`). Explicit credentials, including empty ones, take precedence over cached credentials. A missing field still follows the normal credential-selection flow. Blank lines in wordlist files are ignored as before. After unsuccessful explicit ONVIF authentication, expanding to common credentials still requires confirmation.
+
 Start from a known path or a path template when you already have a stream clue and want tight control over RTSP requests:
 
 ```bash
@@ -168,6 +195,7 @@ Useful flags to keep in mind:
 - `--multi-channel`: prefer channel-based RTSP paths when you suspect a DVR/NVR-style target
 - `--threads N`: control concurrency for ONVIF and RTSP bruteforce
 - `--skip-onvif` / `--skip-rtsp`: focus on one protocol only
+- `-srt, --skip-reachability`: skip the initial ping-based reachability check and its confirmation prompt; protocol/port checks and post-action checks remain enabled
 - `--no-cache`: do not read from or write to cache
 - `--fresh`: ignore cache reads but still write new findings
 
@@ -223,6 +251,25 @@ pwneye --discover
 
 The discovery loop keeps probing every few seconds, prints only newly discovered devices, and can be stopped with `CTRL-C`.
 
+To continuously cycle through all configured non-loopback IPv4 interfaces:
+
+```text
+pwneye --discover all
+
+[info] Starting continuous ONVIF discovery on the target network
+[info] Network interfaces identified for ONVIF discovery:
+
+   en0: 192.168.1.0/24
+   utun8: 10.2.0.0/24
+
+[info] Cycling through 2 network interface(s) until CTRL-C
+⠸ Discovering ONVIF devices on en0 (subnet 192.168.1.0/24) [1/2] (pass 1) - CTRL-C to stop...
+⠸ Discovering ONVIF devices on utun8 (subnet 10.2.0.0/24) [2/2] (pass 1) - CTRL-C to stop...
+⠸ Discovering ONVIF devices on en0 (subnet 192.168.1.0/24) [1/2] (pass 2) - CTRL-C to stop...
+```
+
+These lines illustrate successive updates of the same live status line. Interfaces are selected when discovery starts, and the loop repeats until `CTRL-C`. Results include the discovery interface; the same IP seen on different interfaces is not silently merged. A VPN must transport WS-Discovery multicast for discovery across it to work: selecting an interface does not perform a unicast subnet scan.
+
 You can also force discovery through a specific network interface:
 
 ```bash
@@ -248,7 +295,7 @@ pwneye -t 192.168.1.135 -ou admin -op ~/wordlists/rockyou-short.txt --skip-rtsp 
 [info] No explicit ONVIF credentials specified, trying common ONVIF credentials...
 [info] Trying ONVIF authentication using common username(s) and password(s)...
 [success] 192.168.1.135 supports ONVIF on port 80
-⠼ Trying ONVIF on 192.168.1.135:80 with camera:12345
+⠼ [  7%] [ 7/99] Trying ONVIF on 192.168.1.135:80 with camera:12345
 ```
 
 Useful options:
@@ -530,9 +577,17 @@ Useful options:
 - `--vendor VENDOR`: force a vendor from the RTSP database
 - `--list-vendors`: print the vendors supported by the RTSP knowledge base and exit
 - `--protocol tcp|udp`: choose RTSP transport, default is `tcp`
-- `--timeout SECONDS`: RTSP timeout, default is `10`
+- `--timeout SECONDS`: override the timeout for both RTSP port discovery and stream probes. Without this option, port discovery uses `5` seconds and stream probes use `10` seconds. Each port check shares one timeout budget across TCP connection, OPTIONS transmission and response reception (system DNS resolution may take additional time).
 
 ### RTSP Bruteforce
+
+ONVIF and RTSP bruteforce display a **bold percentage and completed/total counter** in the live status line, based on completed combinations in the current phase (not requests started). Both fields are right-aligned with spaces: the percentage reserves three digits, and the counter width is determined from the phase total at its first update. For example:
+
+```text
+⠸ [  7%] [ 530/7560] Trying rtsp://admin:admin@192.168.1.135:554/live/ch00_0
+```
+
+The progress values in these examples are illustrative. Each phase starts at `0%` with zero completed combinations; a successful early match stops scanning without artificially advancing to `100%`. Internal retries do not count as additional combinations. Padding keeps the attempt text in the same column throughout each phase, without leading zeroes.
 
 Bruteforce RTSP with fixed credentials:
 
@@ -614,6 +669,8 @@ pwneye -t 192.168.1.135 --skip-onvif -cn channel_paths.txt
 Sample output:
 
 ```text
+[info] Checking whether the target appears to support RTSP channel enumeration...
+[info] The target appears to support RTSP channel enumeration
 [info] Enumerating RTSP channels using the validated connection template...
 [info] Press CTRL-C to stop channel enumeration and choose from the channels found
 [success] RTSP channel 2 is valid
@@ -627,6 +684,8 @@ Sample output:
 
 [>] Select channel (CTRL-C to exit):
 ```
+
+Before enumerating, pwneye silently probes a few unlikely channel IDs. If at least two return a stream, the target may be ignoring the channel parameter: a warning is printed and you are asked whether to continue anyway (default: `n`). Declining retains only the original validated stream; accepting continues the existing enumeration. Timeouts or other inconclusive responses do not prove that enumeration is supported; a warning is shown and the existing enumeration continues. This is a heuristic, not a guarantee that each accepted channel is a distinct camera. Use `--fresh` to recheck previously cached channel lists.
 
 If you choose `Open all discovered channels`, `pwneye` launches a dedicated multi-channel client that keeps all discovered streams inside a single window. Each feed is shown in the mosaic as a live preview, and clicking a tile promotes that channel to a larger focused view with a simple `Back` action to return to the grid.
 

@@ -642,7 +642,7 @@ def probe_rtsp_url_with_ffprobe(
         error=stderr.strip() or "ffprobe failed",
     )
 
-def is_rtsp_port(host: str, port: int, timeout: int = 3) -> bool:
+def is_rtsp_port(host: str, port: int, timeout: int = 5) -> bool:
     """
     Check if a port supports RTSP protocol.
     
@@ -651,34 +651,34 @@ def is_rtsp_port(host: str, port: int, timeout: int = 3) -> bool:
     Args:
         host: Target host/IP
         port: Port to check
-        timeout: Connection timeout in seconds
+        timeout: Shared socket-operation budget in seconds (system DNS resolution is separate)
         
     Returns:
         True if port responds to RTSP, False otherwise
     """
     try:
-        # Create socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(timeout)
-        
-        # Connect
-        sock.connect((host, port))
-        
-        # Send RTSP OPTIONS request
-        request = (
-            f"OPTIONS rtsp://{host}:{port}/ RTSP/1.0\r\n"
-            f"CSeq: 1\r\n"
-            f"\r\n"
-        )
-        sock.sendall(request.encode())
-        
-        # Read response
-        response = sock.recv(1024).decode('utf-8', errors='ignore')
-        
-        sock.close()
-        
-        # Check if response is RTSP
-        return response.startswith('RTSP/1.0') or response.startswith('RTSP/2.0')
+        deadline = time.monotonic() + timeout
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            def remaining() -> float:
+                budget = deadline - time.monotonic()
+                if budget <= 0:
+                    raise socket.timeout("RTSP port probe timed out")
+                return budget
+
+            sock.settimeout(remaining())
+            sock.connect((host, port))
+            request = f"OPTIONS rtsp://{host}:{port}/ RTSP/1.0\r\nCSeq: 1\r\n\r\n"
+            sock.settimeout(remaining())
+            sock.sendall(request.encode())
+            # A status prefix may arrive in multiple TCP packets.
+            prefix = b""
+            while len(prefix) < 8:
+                sock.settimeout(remaining())
+                chunk = sock.recv(8 - len(prefix))
+                if not chunk:
+                    return False
+                prefix += chunk
+            return prefix in (b"RTSP/1.0", b"RTSP/2.0")
     except (socket.timeout, socket.error, ConnectionRefusedError, OSError):
         return False
     

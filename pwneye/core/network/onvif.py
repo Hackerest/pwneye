@@ -526,6 +526,7 @@ def detect(
     on_port_check: Optional[Callable[[int], None]] = None,
     on_port_detected: Optional[Callable[[int], None]] = None,
     responsive_ports: Optional[List[int]] = None,
+    on_progress: Optional[Callable[[int, int, int, str, str], None]] = None,
 ) -> Optional[Dict[str, Any]]:
     """
     Detect ONVIF support by trying all port / credential combinations.
@@ -566,12 +567,13 @@ def detect(
     state_lock = threading.Lock()
 
     result: Optional[Dict[str, Any]] = None
+    completed = 0
 
     for task in tasks:
         task_queue.put(task)
 
     def worker() -> None:
-        nonlocal result
+        nonlocal result, completed
 
         while not stop_event.is_set():
             try:
@@ -580,6 +582,9 @@ def detect(
                 return
 
             try:
+                with state_lock:
+                    if on_progress is not None:
+                        on_progress(completed, len(tasks), port, username, password)
                 if on_attempt is not None:
                     on_attempt(port, username, password)
 
@@ -602,6 +607,10 @@ def detect(
                             }
                             stop_event.set()
             finally:
+                with state_lock:
+                    completed += 1
+                    if on_progress is not None:
+                        on_progress(completed, len(tasks), port, username, password)
                 task_queue.task_done()
 
     worker_count = max(1, min(threads, len(tasks)))

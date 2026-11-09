@@ -97,6 +97,7 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
                 tui=tui,
                 preferred_port=args.rtsp_port,
                 onvif_streams=onvif_rtsp_streams,
+                timeout=args.rtsp_port_timeout,
             )
             return _print_rtsp_banner(
                 args=args,
@@ -120,6 +121,7 @@ def run(args: argparse.Namespace, tui: TUI) -> ExitCode:
             tui=tui,
             preferred_port=args.rtsp_port,
             onvif_streams=onvif_rtsp_streams,
+            timeout=args.rtsp_port_timeout,
         )
 
         if not rtsp_ports:
@@ -157,15 +159,18 @@ def _unique(values: list[str]) -> list[str]:
 
     return output
 
-def _resolve_credential_values(value: str) -> list[str]:
+def _resolve_credential_values(value: str | None) -> list[str]:
     """
     Resolve a single credential value or load multiple values from a file.
 
     If `value` points to an existing file, one credential is read from each
     non-empty line. Otherwise the literal value itself is returned.
+    None means omitted; an explicit empty string is a single empty credential.
     """
-    if value == "":
+    if value is None:
         return []
+    if value == "":
+        return [""]
 
     candidate = Path(value).expanduser()
     if candidate.is_file():
@@ -196,6 +201,8 @@ def _resolve_connection_string_values(value: str) -> list[str]:
     """
     Resolve one or more RTSP connection strings from a literal value or file.
     """
+    if not value:
+        return []
     return [
         _normalize_rtsp_connection_string(candidate)
         for candidate in _resolve_credential_values(value)
@@ -265,9 +272,9 @@ def _load_target_cache(
             protocols="/".join(cached_protocols),
             target=args.target,
         )
-        if has_cached_onvif_auth and not args.skip_onvif and (args.onvif_username or args.onvif_password):
+        if has_cached_onvif_auth and not args.skip_onvif and (args.onvif_username is not None or args.onvif_password is not None):
             tui.warning("Ignoring cached ONVIF credentials because explicit ONVIF credentials were provided")
-        if has_cached_rtsp_auth and not args.skip_rtsp and (args.username or args.password):
+        if has_cached_rtsp_auth and not args.skip_rtsp and (args.username is not None or args.password is not None):
             tui.warning("Ignoring cached RTSP credentials because explicit RTSP credentials were provided")
 
     return cache_entry
@@ -461,8 +468,19 @@ def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
     """
     tui.info("Starting continuous ONVIF discovery on the target network")
 
-    discovery_interface_ip = None
-    if args.discover == "":
+    all_interfaces = str(args.discover).lower() == "all"
+    if all_interfaces:
+        selections = netifaces.list_discovery_interfaces()
+        if not selections:
+            tui.error("No IPv4 network interfaces are available for ONVIF discovery")
+            return ExitCode.FAILURE
+        tui.info("Network interfaces identified for ONVIF discovery:")
+        tui.block({
+            selection.name: netifaces.format_interface_subnet(selection) or "Subnet unavailable"
+            for selection in selections
+        })
+        tui.info("Cycling through {count} network interface(s) until CTRL-C", count=len(selections))
+    elif args.discover == "":
         selection = netifaces.get_default_interface()
         selection_subnet = netifaces.format_interface_subnet(selection)
         if selection.name and selection.ipv4:
@@ -477,12 +495,10 @@ def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
                     "No network interface was specified. Using {interface} for discovery",
                     interface=selection.name,
                 )
-            discovery_interface_ip = selection.ipv4
         elif selection.ipv4:
             tui.warning(
                 "No network interface was specified. Using the default local interface for discovery",
             )
-            discovery_interface_ip = selection.ipv4
         else:
             tui.warning("No network interface was specified. Letting the OS choose one automatically")
     else:
@@ -503,27 +519,38 @@ def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
                 "Using network interface {interface} for ONVIF discovery",
                 interface=selection.name or str(args.discover),
             )
-        discovery_interface_ip = selection.ipv4
-
-    discovered_devices: dict[tuple[str, str, tuple[str, ...]], dict] = {}
-    pass_count = 0
+    if not all_interfaces:
+        selections = [selection]
+    discovered_devices: dict[tuple, dict] = {}
+    iteration = 0
 
     tui.start_live("Discovering ONVIF devices on the target network (pass 1) - CTRL-C to stop...")
 
     try:
         while True:
-            pass_count += 1
+            index = iteration % len(selections)
+            pass_count = iteration // len(selections) + 1
+            selection = selections[index]
+            discovery_interface_ip = selection.ipv4
+            network_label = "the target network"
+            if all_interfaces:
+                subnet = netifaces.format_interface_subnet(selection)
+                network_label = f"{selection.name}" + (f" (subnet {subnet})" if subnet else "")
+                network_label += f" [{index + 1}/{len(selections)}]"
             tui.update_live(
-                "Discovering ONVIF devices on the target network (pass {pass_count}). Press CTRL-C to stop the probing...".format(
-                    pass_count=pass_count,
-                )
+                f"Discovering ONVIF devices on {network_label} (pass {pass_count}) - CTRL-C to stop..."
             )
-
-            devices = onvif.discover(interface=discovery_interface_ip)
+            iteration += 1
+            try:
+                devices = onvif.discover(interface=discovery_interface_ip)
+            except Exception as exc:
+                tui.warning("Discovery failed on {interface}: {error}", interface=selection.name or "default interface", error=str(exc))
+                devices = []
 
             new_devices = []
             for device in devices:
                 key = (
+                    selection.name, selection.ipv4,
                     str(device.get("host") or ""),
                     str(device.get("port") or ""),
                     tuple(sorted(device.get("xaddrs", []))),
@@ -531,6 +558,8 @@ def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
                 if key in discovered_devices:
                     continue
 
+                if all_interfaces:
+                    device = dict(device, discovery_interface=selection.name)
                 discovered_devices[key] = device
                 new_devices.append(device)
 
@@ -563,7 +592,8 @@ def _run_onvif_discovery(args: argparse.Namespace, tui: TUI) -> ExitCode:
 
                     _print_onvif_discovery_device(device, tui)
 
-            time.sleep(2)
+            if iteration % len(selections) == 0:
+                time.sleep(2)
     except KeyboardInterrupt:
         tui.stop_live()
         if discovered_devices:
@@ -590,6 +620,8 @@ def _print_onvif_discovery_device(device: dict, tui: TUI) -> None:
         "Types": _format_onvif_types(device.get("types", [])),
         "XAddrs": ", ".join(device.get("xaddrs", [])),
     }
+    if device.get("discovery_interface"):
+        block["Interface"] = device["discovery_interface"]
 
     for field in (
         "Manufacturer",
@@ -690,6 +722,9 @@ def _parse_onvif_scopes(scopes: list[str]) -> dict[str, str]:
     return parsed
     
 def _check_target_reachability(args: argparse.Namespace, tui: TUI) -> bool:
+    if args.skip_reachability:
+        tui.warning("Skipping the initial reachability check as requested")
+        return True
     tui.info("Checking if the target ({target}) is reachable...", target=args.target)
 
     try:
@@ -736,7 +771,7 @@ def _run_onvif_scan(
     rtsp_onvif_usernames, rtsp_onvif_passwords = _rtsp_credentials_not_tested_via_onvif(args, onvif_kb)
 
     cached_onvif_auth = None
-    if not args.onvif_username and not args.onvif_password:
+    if args.onvif_username is None and args.onvif_password is None:
         cached_onvif_auth = cachedata.get_cached_onvif_auth(cache_entry)
 
     if cached_onvif_auth:
@@ -760,11 +795,11 @@ def _run_onvif_scan(
             tui.warning("Cached ONVIF credentials are no longer valid")
 
     # ---------- FIRST ATTEMPT: user-provided credentials ----------
-    if camera is None and (args.onvif_username or args.onvif_password):
+    if camera is None and (args.onvif_username is not None or args.onvif_password is not None):
         auth_hint = None
-        if args.onvif_username and not args.onvif_password:
+        if args.onvif_username is not None and args.onvif_password is None:
             auth_hint = "Only ONVIF username provided, testing common passwords"
-        elif not args.onvif_username and args.onvif_password:
+        elif args.onvif_username is None and args.onvif_password is not None:
             auth_hint = "Only ONVIF password provided, testing common usernames"
 
         camera, credentials, successful_port, responsive_onvif_ports = _detect_onvif_camera(
@@ -944,8 +979,8 @@ def _resolve_onvif_targets(args, kb):
         (ports, usernames, passwords)
     """
     ports = [args.onvif_port] if args.onvif_port else kb["ports"]
-    usernames = _resolve_credential_values(args.onvif_username) if args.onvif_username else kb["usernames"]
-    passwords = _resolve_credential_values(args.onvif_password) if args.onvif_password else kb["passwords"]
+    usernames = _resolve_credential_values(args.onvif_username) if args.onvif_username is not None else kb["usernames"]
+    passwords = _resolve_credential_values(args.onvif_password) if args.onvif_password is not None else kb["passwords"]
 
     return ports, usernames, passwords
 
@@ -1113,8 +1148,9 @@ def _attempt_onvif_login(
         print_auth_label()
         print_auth_hint()
 
-    def on_attempt(port: int, username: str, password: str) -> None:
-        tui.update_live(
+    def on_progress(completed: int, total: int, port: int, username: str, password: str) -> None:
+        tui.update_attempt_progress(
+            completed, total,
             "Trying ONVIF on {target}:{port} with {username}:{password}".format(
                 port=port,
                 username=username or "(empty)",
@@ -1135,7 +1171,7 @@ def _attempt_onvif_login(
             usernames=usernames,
             passwords=passwords,
             threads=args.threads,
-            on_attempt=on_attempt,
+            on_progress=on_progress,
             on_port_check=on_port_check,
             on_port_detected=on_port_detected,
             responsive_ports=responsive_ports,
@@ -1817,6 +1853,7 @@ def _filter_onvif_rtsp_streams_by_valid_port(
     streams: list[str],
     tui: TUI,
     validated_ports: list[int] | None = None,
+    timeout: int = 5,
 ) -> list[str]:
     """
     Return only RTSP streams whose port is reachable and supports RTSP.
@@ -1846,7 +1883,7 @@ def _filter_onvif_rtsp_streams_by_valid_port(
 
         tui.info("Checking if {target}:{port} supports RTSP...", target=host, port=port)
 
-        if rtsp.is_rtsp_port(host, port):
+        if rtsp.is_rtsp_port(host, port, timeout=timeout):
             tui.info2("{target} supports RTSP on port {port}!", target=host, port=port)
             valid_ports.add(port)
         else:
@@ -1875,6 +1912,7 @@ def _resolve_rtsp_ports(
     tui: TUI,
     preferred_port: int | None = None,
     onvif_streams: list[str] | None = None,
+    timeout: int = 5,
 ) -> list[int]:
     """
     Resolve and validate RTSP ports for the target.
@@ -1897,7 +1935,7 @@ def _resolve_rtsp_ports(
         tui.info("Testing user-specified RTSP port {target}:{port}", target=host, port=preferred_port)
         tested_ports.add(preferred_port)
 
-        if rtsp.is_rtsp_port(host, preferred_port):
+        if rtsp.is_rtsp_port(host, preferred_port, timeout=timeout):
             tui.success("{target} responds to RTSP on port {port}", target=host, port=preferred_port)
             valid_ports.append(preferred_port)
             return valid_ports
@@ -1933,7 +1971,7 @@ def _resolve_rtsp_ports(
                 )
             )
 
-            if rtsp.is_rtsp_port(host, port):
+            if rtsp.is_rtsp_port(host, port, timeout=timeout):
                 tui.success("{target} responds to RTSP on port {port}", target=host, port=port)
                 valid_ports.append(port)
 
@@ -1961,7 +1999,7 @@ def _resolve_rtsp_ports(
                 )
             )
 
-            if rtsp.is_rtsp_port(host, port):
+            if rtsp.is_rtsp_port(host, port, timeout=timeout):
                 tui.success("{target} responds to RTSP on port {port}", target=host, port=port)
                 valid_ports.append(port)
 
@@ -2083,9 +2121,9 @@ def _resolve_rtsp_targets(
     provided_usernames = _resolve_credential_values(args.username)
     provided_passwords = _resolve_credential_values(args.password)
 
-    fixed_rtsp_credentials = bool(provided_usernames and provided_passwords)
-    fixed_rtsp_username = bool(provided_usernames and not provided_passwords)
-    fixed_rtsp_password = bool(provided_passwords and not provided_usernames)
+    fixed_rtsp_credentials = args.username is not None and args.password is not None
+    fixed_rtsp_username = args.username is not None and args.password is None
+    fixed_rtsp_password = args.password is not None and args.username is None
 
     if fixed_rtsp_credentials:
         usernames = provided_usernames
@@ -2429,6 +2467,36 @@ def _build_cached_rtsp_channel_entries(
 
     return entries
 
+def _check_rtsp_channel_enumeration(
+    base_attempt: RtspAttempt, template: str, initial_channel: int,
+    args: argparse.Namespace, tui: TUI,
+) -> bool:
+    """Reject likely catch-all paths without advertising the sentinel channel IDs."""
+    tui.info("Checking whether the target appears to support RTSP channel enumeration...")
+    accepted = 0
+    rejected = 0
+    for channel in (1337, 31337, 65535):
+        if channel == initial_channel:
+            continue
+        attempt = _build_rtsp_channel_attempt(base_attempt, template, channel)
+        result = _probe_rtsp_attempt(attempt, timeout=args.timeout)
+        if result.stream_available:
+            accepted += 1
+        elif result.status_code in (400, 404) and result.error is None:
+            rejected += 1
+        if accepted >= 2:
+            tui.warning(
+                "The device may be ignoring the channel identifier. Additional channels could be "
+                "aliases of the same stream"
+            )
+            return tui.confirm("Continue channel enumeration anyway?", default=False)
+    if rejected >= 2 and not accepted:
+        tui.info2("The target appears to support RTSP channel enumeration")
+    else:
+        tui.warning("Channel enumeration support could not be confirmed. Continuing with the existing enumeration method")
+    return True
+
+
 def _discover_rtsp_channels(
     base_attempt: RtspAttempt,
     args: argparse.Namespace,
@@ -2445,6 +2513,12 @@ def _discover_rtsp_channels(
     discovered: dict[int, RtspChannelEntry] = {
         initial_channel: RtspChannelEntry(channel=initial_channel, attempt=base_attempt)
     }
+    try:
+        if not _check_rtsp_channel_enumeration(base_attempt, channel_template, initial_channel, args, tui):
+            return list(discovered.values()), False
+    except KeyboardInterrupt:
+        tui.info("Stopping channel enumeration and using the validated stream")
+        return list(discovered.values()), True
     tested = {initial_channel}
 
     def try_channel(channel: int) -> bool:
@@ -2684,7 +2758,7 @@ def _try_cached_rtsp_auth(
     """
     Try a previously cached RTSP credential and stream before running a fresh scan.
     """
-    if args.no_cache or args.fresh or args.username or args.password or args.connection_string:
+    if args.no_cache or args.fresh or args.username is not None or args.password is not None or args.connection_string:
         return False
 
     cached_rtsp = cachedata.get_cached_rtsp_auth(cache_entry)
@@ -2794,7 +2868,8 @@ def _run_rtsp_bruteforce(
                     return
 
                 try:
-                    tui.update_live(_format_attempt_label(attempt))
+                    with state_lock:
+                        tui.update_attempt_progress(stats["attempted"], len(attempts), _format_attempt_label(attempt))
 
                     result = rtsp.probe_rtsp_url(
                         attempt.url,
@@ -2830,6 +2905,7 @@ def _run_rtsp_bruteforce(
                             stats["invalid_path"] += 1
                         elif result.error:
                             stats["errors"] += 1
+                        tui.update_attempt_progress(stats["attempted"], len(attempts), _format_attempt_label(attempt))
 
                 except InterruptedError:
                     return
@@ -2837,6 +2913,7 @@ def _run_rtsp_bruteforce(
                     with state_lock:
                         stats["attempted"] += 1
                         stats["errors"] += 1
+                        tui.update_attempt_progress(stats["attempted"], len(attempts), _format_attempt_label(attempt))
                 finally:
                     task_queue.task_done()
 
@@ -2889,6 +2966,7 @@ def _run_rtsp_scan(
         streams=onvif_streams,
         tui=tui,
         validated_ports=rtsp_ports,
+        timeout=args.rtsp_port_timeout,
     ) if onvif_streams else []
     provided_connection_strings = bool(_resolve_connection_string_values(args.connection_string))
 
@@ -2908,16 +2986,16 @@ def _run_rtsp_scan(
     else:
         vendor = _detect_rtsp_vendor(args.target, rtsp_ports, rtsp_kb, tui, no_cache=args.no_cache)
 
-    fixed_rtsp_credentials = bool(args.username and args.password)
+    fixed_rtsp_credentials = args.username is not None and args.password is not None
     if fixed_rtsp_credentials:
         tui.info(
             "Loading user-provided RTSP username(s) and password(s)..."
         )
-    elif args.username:
+    elif args.username is not None:
         tui.info(
             "Loading user-provided RTSP username(s)..."
         )
-    elif args.password:
+    elif args.password is not None:
         tui.info(
             "Loading user-provided RTSP password(s)..."
         )

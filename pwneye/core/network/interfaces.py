@@ -19,6 +19,25 @@ def list_interface_names() -> list[str]:
     return [adapter.name for adapter in ifaddr.get_adapters(include_unconfigured=True)]
 
 
+def list_discovery_interfaces() -> list[InterfaceSelection]:
+    """Return one configured non-loopback IPv4 address per network interface."""
+    selections = []
+    seen = set()
+    for adapter in ifaddr.get_adapters():
+        if adapter.name in seen:
+            continue
+        for address in adapter.ips:
+            ipv4 = _normalize_ipv4(address.ip)
+            if ipv4 is None or ipv4 == "0.0.0.0":
+                continue
+            selections.append(InterfaceSelection(
+                adapter.name, ipv4, _normalize_prefixlen(address.network_prefix),
+            ))
+            seen.add(adapter.name)
+            break
+    return selections
+
+
 def get_interface_ipv4(name: str) -> str | None:
     """
     Resolve the primary IPv4 address associated with a network interface name.

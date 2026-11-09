@@ -42,6 +42,8 @@ class TUI:
         self._live_message = ""
         self._live_spinner = "dots"
         self._interrupted = False
+        self._progress_total: int | None = None
+        self._progress_width = 1
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -193,6 +195,7 @@ class TUI:
         """
         with self._lock:
             self.stop_live()
+            self._progress_total = None
             self._live_message = message
             self._live_spinner = spinner
             self._live = self.console.status(message, spinner=spinner)
@@ -208,6 +211,17 @@ class TUI:
 
             self._live_message = message
             self._live.update(message)
+
+    def update_attempt_progress(self, completed: int, total: int, message: str) -> None:
+        with self._lock:
+            total = max(0, total)
+            if self._progress_total != total:
+                self._progress_total = total
+                self._progress_width = len(str(total))
+            completed = min(total, max(0, completed))
+            percent = completed * 100 // total if total else 0
+            counter = f"{completed:>{self._progress_width}}/{total}"
+            self.update_live(f"[bold]\\[{percent:3d}%] \\[{counter}][/bold] {escape(message)}")
 
     def stop_live(self) -> None:
         """

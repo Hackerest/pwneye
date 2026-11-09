@@ -122,8 +122,8 @@ def parse_args(logger) -> argparse.Namespace:
         nargs="?",
         const="",
         default=None,
-        metavar="INTERFACE",
-        help="Discover ONVIF cameras on the local network, optionally using INTERFACE",
+        metavar="INTERFACE|all",
+        help="Continuously discover ONVIF cameras using INTERFACE, or cycle through all IPv4 interfaces",
     )
 
     # ONVIF options
@@ -144,14 +144,14 @@ def parse_args(logger) -> argparse.Namespace:
     onvif.add_argument(
         "-ou", "--onvif-username",
         metavar="USER",
-        default="",
-        help="ONVIF username or file with one username per line (otherwise common usernames are used)",
+        default=None,
+        help="ONVIF username or file (omit for common usernames; use '' for an empty username)",
     )
     onvif.add_argument(
         "-op", "--onvif-password",
         metavar="PASS",
-        default="",
-        help="ONVIF password or file with one password per line (otherwise common passwords are used)",
+        default=None,
+        help="ONVIF password or file (omit for common passwords; use '' for an empty password)",
     )
     onvif.add_argument(
         "--reboot",
@@ -209,15 +209,15 @@ def parse_args(logger) -> argparse.Namespace:
     )
     rtsp.add_argument(
         "-u", "--username",
-        default="",
+        default=None,
         metavar="USER",
-        help="RTSP username or file with one username per line (otherwise common usernames are used)",
+        help="RTSP username or file (omit for common usernames; use '' for an empty username)",
     )
     rtsp.add_argument(
         "-p", "--password",
-        default="",
+        default=None,
         metavar="PASS",
-        help="RTSP password or file with one password per line (otherwise common passwords are used)",
+        help="RTSP password or file (omit for common passwords; use '' for an empty password)",
     )
     rtsp.add_argument(
         "-cn", "--connection-string",
@@ -234,9 +234,9 @@ def parse_args(logger) -> argparse.Namespace:
     rtsp.add_argument(
         "--timeout",
         type=int,
-        default=10,
+        default=None,
         metavar="SECONDS",
-        help="RTSP connection timeout (default: 10)",
+        help="Override RTSP timeouts (defaults: 5 seconds for port discovery, 10 for stream probes)",
     )
     rtsp.add_argument(
         "--vendor",
@@ -303,6 +303,11 @@ def parse_args(logger) -> argparse.Namespace:
 
     misc = parser.add_argument_group("Misc (optional)")
     misc.add_argument(
+        "-srt", "--skip-reachability",
+        action="store_true",
+        help="Skip the initial target reachability check",
+    )
+    misc.add_argument(
         "--threads",
         type=int,
         default=1,
@@ -319,10 +324,22 @@ def parse_args(logger) -> argparse.Namespace:
         action="store_true",
         help="Check whether a newer pwneye release is available and exit",
     )
+    misc.add_argument(
+        "--update",
+        action="store_true",
+        help="Update pwneye to the latest version",
+    )
 
     args = parser.parse_args()
+    if args.timeout is not None and args.timeout <= 0:
+        parser.error("--timeout must be greater than zero")
+    args.rtsp_port_timeout = args.timeout if args.timeout is not None else 5
+    args.timeout = args.timeout if args.timeout is not None else 10
 
-    if not (args.target or args.discover is not None or args.list_vendors or args.check_updates or args.clear_cache):
+    if args.update and (args.target or args.discover is not None or args.list_vendors or args.check_updates or args.clear_cache):
+        parser.error("--update must be used as a standalone command")
+
+    if not (args.target or args.discover is not None or args.list_vendors or args.check_updates or args.clear_cache or args.update):
         parser.error("one of --target or --discover is required")
 
     if args.record is not None and args.snapshot is not None:

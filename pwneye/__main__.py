@@ -2,7 +2,7 @@ from rich.console import Console
 from pwneye.cli.tui import print_banner, TUI
 from pwneye.cli.parser import parse_args
 from pwneye.config import REPO
-from pwneye.core import engine
+from pwneye.core import engine, updater
 from pwneye.core.network import github
 from pwneye.core.storage import cache as cachedata
 from pwneye.core.storage import motd
@@ -11,7 +11,7 @@ from pwneye.core.types import ExitCode
 RELEASES_URL = f"{REPO}/releases"
 
 
-def _run_update_check(tui: TUI) -> ExitCode:
+def _run_update_check(tui: TUI, *, upgrade: bool = False) -> ExitCode:
     tui.info("Checking for updates...")
 
     current_version, latest_version, update_available = github.get_update_status()
@@ -25,7 +25,7 @@ def _run_update_check(tui: TUI) -> ExitCode:
             f"but version [bold]{latest_version}[/bold] is available "
             f"({RELEASES_URL})"
         )
-        return ExitCode.SUCCESS
+        return updater.run(tui) if upgrade else ExitCode.SUCCESS
 
     tui.info2(
         f"You are already running the latest version [bold]{current_version}[/bold]"
@@ -77,18 +77,19 @@ def main() -> int:
             console.print()
             return exit_code
 
-        if args.check_updates:
-            exit_code = _run_update_check(tui)
+        if args.check_updates or args.update:
+            exit_code = _run_update_check(tui, upgrade=args.update)
             console.print()
             return exit_code
 
         available_update = github.get_available_update()
         if available_update is not None:
             current_version, latest_version = available_update
+            upgrade_hint = ". Run [bold]pwneye --update[/bold] to upgrade" if updater.is_pipx_installation() else ""
             tui.warning(
                 f"You are running version [bold]{current_version}[/bold], "
                 f"but version [bold]{latest_version}[/bold] is available "
-                f"({RELEASES_URL})"
+                f"({RELEASES_URL}){upgrade_hint}"
             )
 
         exit_code = engine.run(args, tui)
